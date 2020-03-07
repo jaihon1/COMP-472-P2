@@ -115,47 +115,13 @@ class NaiveBayes():
     def train(self, grams, language):
         indexList = []
 
-        if language == 'eu':
-            print("Training EU: ")
-            if self.n_gram_type == 1:
-                for gram in grams:
-                    for char in gram:
-                        indexList.append(self.getCharIndex(char))
+        print("Training EU: ")
+        for gram in grams:
+            for char in gram:
+                indexList.append(self.getCharIndex(char))
 
-                    self.updateGram(indexList)
-                    indexList.clear()
-
-            elif self.n_gram_type == 2:
-                for gram in grams:
-                    for char in gram:
-                        indexList.append(self.getCharIndex(char))
-
-                    self.updateGram(indexList)
-                    indexList.clear()
-
-            elif self.n_gram_type == 3:
-                for gram in grams:
-                    for char in gram:
-                        indexList.append(self.getCharIndex(char))
-
-                    self.updateGram(indexList)
-                    indexList.clear()
-
-        elif language == 'ca':
-            pass
-
-        elif language == 'gl':
-            pass
-
-        elif language == 'es':
-            pass
-
-        elif language == 'en':
-            pass
-
-        elif language == 'pt':
-            pass
-
+            self.updateGram(indexList, language)
+            indexList.clear()
 
     def run(self):
         with open(self.train_file_name) as f:
@@ -177,14 +143,6 @@ class NaiveBayes():
             print("Number of grams: ", len(grams))
 
             self.train(grams, language)
-
-
-            # clean data
-            # print(np.where(self.n_gram_eu == ))
-
-
-            # if language == 'eu':
-
 
             break
 
