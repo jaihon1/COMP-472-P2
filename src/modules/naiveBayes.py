@@ -104,11 +104,42 @@ class NaiveBayes():
         # elif self.n_gram_type == 3:
         return grams
 
+    # Returns the index of the given char in the vocabulary
     def getCharIndex(self, char):
         try:
             return self.corpus.index(char)
         except ValueError as err:
             print(err)
+
+    # Smooth-add the corresponding gram
+    def smoothModel(self, language):
+        if language == 'eu':
+            self.n_gram_eu = self.n_gram_eu + self.smoothing
+        elif language == 'ca':
+            self.n_gram_ca = self.n_gram_ca + self.smoothing
+        elif language == 'gl':
+            self.n_gram_gl = self.n_gram_gl + self.smoothing
+        elif language == 'es':
+            self.n_gram_es = self.n_gram_es + self.smoothing
+        elif language == 'en':
+            self.n_gram_en = self.n_gram_en + self.smoothing
+        elif language == 'pt':
+            self.n_gram_pt = self.n_gram_pt + self.smoothing
+
+    # increment the corresponding occurence in the gram
+    def updateGram(self, position, language):
+        if language == 'eu':
+            np.add(self.n_gram_eu, position, 1)
+        elif language == 'ca':
+            np.add(self.n_gram_ca, position, 1)
+        elif language == 'gl':
+            np.add(self.n_gram_gl, position, 1)
+        elif language == 'es':
+            np.add(self.n_gram_es, position, 1)
+        elif language == 'en':
+            np.add(self.n_gram_en, position, 1)
+        elif language == 'pt':
+            np.add(self.n_gram_pt, position, 1)
 
     def train(self):
         with open(self.train_file_name) as f:
