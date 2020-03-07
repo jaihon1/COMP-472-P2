@@ -19,5 +19,10 @@ def main():
     print("Initial N gram EN: ")
     print(model.getNGramEN())
 
+    model.smoothModel()
+
+    print("Initial N gram EN: ")
+    print(model.getNGramEN())
+
 if __name__ == '__main__':
     main()

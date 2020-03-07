@@ -26,6 +26,7 @@ class NaiveBayes():
         self.n_gram_es = None
         self.n_gram_en = None
         self.n_gram_pt = None
+        self.grams_total = 0
         self.smoothing = s
         self.train_file_name = train_file_name
         self.test_file_name = test_file_name
@@ -115,19 +116,13 @@ class NaiveBayes():
             print(err)
 
     # Smooth-add the corresponding gram
-    def smoothModel(self, language):
-        if language == 'eu':
-            self.n_gram_eu = self.n_gram_eu + self.smoothing
-        elif language == 'ca':
-            self.n_gram_ca = self.n_gram_ca + self.smoothing
-        elif language == 'gl':
-            self.n_gram_gl = self.n_gram_gl + self.smoothing
-        elif language == 'es':
-            self.n_gram_es = self.n_gram_es + self.smoothing
-        elif language == 'en':
-            self.n_gram_en = self.n_gram_en + self.smoothing
-        elif language == 'pt':
-            self.n_gram_pt = self.n_gram_pt + self.smoothing
+    def smoothModel(self):
+        self.n_gram_eu = self.n_gram_eu + self.smoothing
+        self.n_gram_ca = self.n_gram_ca + self.smoothing
+        self.n_gram_gl = self.n_gram_gl + self.smoothing
+        self.n_gram_es = self.n_gram_es + self.smoothing
+        self.n_gram_en = self.n_gram_en + self.smoothing
+        self.n_gram_pt = self.n_gram_pt + self.smoothing
 
     # increment the corresponding occurence in the gram
     def updateGram(self, position, language):
