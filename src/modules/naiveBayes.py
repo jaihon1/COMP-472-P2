@@ -104,8 +104,11 @@ class NaiveBayes():
         # elif self.n_gram_type == 3:
         return grams
 
-
-
+    def getCharIndex(self, char):
+        try:
+            return self.corpus.index(char)
+        except ValueError as err:
+            print(err)
 
     def train(self):
         with open(self.train_file_name) as f:
