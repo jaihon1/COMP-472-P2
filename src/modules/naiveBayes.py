@@ -55,20 +55,20 @@ class NaiveBayes():
             self.n_gram_pt = np.zeros(shape=(1, self.corpus_size), dtype=float)
 
         elif self.n_gram_type == 2:
-            self.n_gram_eu = np.zeros(shape=(1, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_ca = np.zeros(shape=(1, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_gl = np.zeros(shape=(1, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_es = np.zeros(shape=(1, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_en = np.zeros(shape=(1, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_pt = np.zeros(shape=(1, self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_eu = np.zeros(shape=(self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_ca = np.zeros(shape=(self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_gl = np.zeros(shape=(self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_es = np.zeros(shape=(self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_en = np.zeros(shape=(self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_pt = np.zeros(shape=(self.corpus_size, self.corpus_size), dtype=float)
 
         elif self.n_gram_type == 3:
-            self.n_gram_eu = np.zeros(shape=(1, self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_ca = np.zeros(shape=(1, self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_gl = np.zeros(shape=(1, self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_es = np.zeros(shape=(1, self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_en = np.zeros(shape=(1, self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
-            self.n_gram_pt = np.zeros(shape=(1, self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_eu = np.zeros(shape=(self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_ca = np.zeros(shape=(self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_gl = np.zeros(shape=(self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_es = np.zeros(shape=(self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_en = np.zeros(shape=(self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
+            self.n_gram_pt = np.zeros(shape=(self.corpus_size, self.corpus_size, self.corpus_size), dtype=float)
 
 
     def generateVocabulary(self):
@@ -85,6 +85,11 @@ class NaiveBayes():
             self.corpus = list(string.ascii_letters)
             self.corpus_size = len(self.corpus)
 
+    def getCharIndex(self, char):
+        try:
+            return self.corpus.index(char)
+        except ValueError as err:
+            print(err)
 
     def buildGram(self, data):
         grams = []
@@ -97,11 +102,14 @@ class NaiveBayes():
             for i, char in enumerate(data):
                 if i < (len(data) - 1):
                     if (char in self.corpus) and (data[i+1] in self.corpus):
-                        grams.append(char)
-                else:
-                    pass
+                        grams.append(char + data[i+1])
 
-        # elif self.n_gram_type == 3:
+        elif self.n_gram_type == 3:
+            for i, char in enumerate(data):
+                if i < (len(data) - 2):
+                    if (char in self.corpus) and (data[i+1] in self.corpus) and (data[i+2] in self.corpus):
+                        grams.append(char + data[i+1] + data[i+2])
+
         return grams
 
     # Returns the index of the given char in the vocabulary
@@ -141,7 +149,18 @@ class NaiveBayes():
         elif language == 'pt':
             np.add(self.n_gram_pt, position, 1)
 
-    def train(self):
+    def train(self, grams, language):
+        indexList = []
+
+        print("Training EU: ")
+        for gram in grams:
+            for char in gram:
+                indexList.append(self.getCharIndex(char))
+
+            self.updateGram(indexList, language)
+            indexList.clear()
+
+    def run(self):
         with open(self.train_file_name) as f:
             tweets = f.readlines()
 
@@ -156,15 +175,11 @@ class NaiveBayes():
             language = elements[2]
             data = ' '.join(elements[3:])
 
-            grams = self.buildGram(data)
-            print(grams)
+            grams = self.buildGram("helH ell")
+            print("Grams list: ", grams)
+            print("Number of grams: ", len(grams))
 
-            # clean data
-            # print(np.where(self.n_gram_eu == ))
-
-
-            # if language == 'eu':
-
+            self.train(grams, language)
 
             break
 
