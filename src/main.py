@@ -3,20 +3,14 @@ from modules.naiveBayes import NaiveBayes
 def main():
 
     ## Reading files
-    test_file = '../../datasets/testing/test-tweets-given.txt'
-    train_file = '../../datasets/testing/training-tweets.txt'
+    test_file = '../../datasets/test/test-tweets-given.txt'
+    train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
 
-    model = NaiveBayes(2, 1, 1, test_file, train_file)
+    model = NaiveBayes(0, 1, 1, train_file, test_file)
 
-    print(model.getCorpus())
-
-
-
-    # with open(test_file) as f:
-    #     tweets = f.readlines()
-
-    # for tweet in tweets:
-    #     print(tweet)
+    # print(model.getNGramEN())
+    # print(model.getCorpus())
+    model.train()
 
 if __name__ == '__main__':
     main()
