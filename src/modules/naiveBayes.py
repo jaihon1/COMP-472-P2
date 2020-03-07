@@ -4,9 +4,9 @@
 # v = 2 -> Distinguish up and low cases and use all characters accepted by the built-in isalpha() method
 
 ### N-gram
-# n = 0 -> character unigrams
-# n = 1 -> character bigrams
-# n = 2 -> character trigrams
+# n = 1 -> character unigrams
+# n = 2 -> character bigrams
+# n = 3 -> character trigrams
 
 ### Smoothing
 # s = {0,...,1}
@@ -47,12 +47,12 @@ class NaiveBayes():
 
     def generateNgram(self):
         if self.n_gram_type == 1:
-            self.n_gram_eu = np.zeros(shape=(1, self.corpus_size), dtype=float)
-            self.n_gram_ca = np.zeros(shape=(1, self.corpus_size), dtype=float)
-            self.n_gram_gl = np.zeros(shape=(1, self.corpus_size), dtype=float)
-            self.n_gram_es = np.zeros(shape=(1, self.corpus_size), dtype=float)
-            self.n_gram_en = np.zeros(shape=(1, self.corpus_size), dtype=float)
-            self.n_gram_pt = np.zeros(shape=(1, self.corpus_size), dtype=float)
+            self.n_gram_eu = np.zeros(shape=(self.corpus_size), dtype=float)
+            self.n_gram_ca = np.zeros(shape=(self.corpus_size), dtype=float)
+            self.n_gram_gl = np.zeros(shape=(self.corpus_size), dtype=float)
+            self.n_gram_es = np.zeros(shape=(self.corpus_size), dtype=float)
+            self.n_gram_en = np.zeros(shape=(self.corpus_size), dtype=float)
+            self.n_gram_pt = np.zeros(shape=(self.corpus_size), dtype=float)
 
         elif self.n_gram_type == 2:
             self.n_gram_eu = np.zeros(shape=(self.corpus_size, self.corpus_size), dtype=float)
@@ -85,11 +85,6 @@ class NaiveBayes():
             self.corpus = list(string.ascii_letters)
             self.corpus_size = len(self.corpus)
 
-    def getCharIndex(self, char):
-        try:
-            return self.corpus.index(char)
-        except ValueError as err:
-            print(err)
 
     def buildGram(self, data):
         grams = []
@@ -137,17 +132,65 @@ class NaiveBayes():
     # increment the corresponding occurence in the gram
     def updateGram(self, position, language):
         if language == 'eu':
-            np.add(self.n_gram_eu, position, 1)
+            if self.n_gram_type == 1:
+                self.n_gram_eu[position[0]] += 1
+
+            elif self.n_gram_type == 2:
+                self.n_gram_eu[position[0]][position[1]] += 1
+
+            elif self.n_gram_type == 3:
+                self.n_gram_eu[position[0]][position[1]][position[2]] += 1
+
         elif language == 'ca':
-            np.add(self.n_gram_ca, position, 1)
+            if self.n_gram_type == 1:
+                self.n_gram_ca[position[0]] += 1
+
+            elif self.n_gram_type == 2:
+                self.n_gram_ca[position[0]][position[1]] += 1
+
+            elif self.n_gram_type == 3:
+                self.n_gram_ca[position[0]][position[1]][position[2]] += 1
+
         elif language == 'gl':
-            np.add(self.n_gram_gl, position, 1)
+            if self.n_gram_type == 1:
+                self.n_gram_gl[position[0]] += 1
+
+            elif self.n_gram_type == 2:
+                self.n_gram_gl[position[0]][position[1]] += 1
+
+            elif self.n_gram_type == 3:
+                self.n_gram_gl[position[0]][position[1]][position[2]] += 1
+
         elif language == 'es':
-            np.add(self.n_gram_es, position, 1)
+            if self.n_gram_type == 1:
+                self.n_gram_es[position[0]] += 1
+
+            elif self.n_gram_type == 2:
+                self.n_gram_es[position[0]][position[1]] += 1
+
+            elif self.n_gram_type == 3:
+                self.n_gram_es[position[0]][position[1]][position[2]] += 1
+
         elif language == 'en':
-            np.add(self.n_gram_en, position, 1)
+            if self.n_gram_type == 1:
+                self.n_gram_en[position[0]] += 1
+
+            elif self.n_gram_type == 2:
+                self.n_gram_en[position[0]][position[1]] += 1
+
+            elif self.n_gram_type == 3:
+                self.n_gram_en[position[0]][position[1]][position[2]] += 1
+
         elif language == 'pt':
-            np.add(self.n_gram_pt, position, 1)
+            if self.n_gram_type == 1:
+                self.n_gram_pt[position[0]] += 1
+
+            elif self.n_gram_type == 2:
+                self.n_gram_pt[position[0]][position[1]] += 1
+
+            elif self.n_gram_type == 3:
+                self.n_gram_pt[position[0]][position[1]][position[2]] += 1
+
 
     def train(self, grams, language):
         indexList = []
@@ -157,7 +200,9 @@ class NaiveBayes():
             for char in gram:
                 indexList.append(self.getCharIndex(char))
 
+            print("train() ", indexList)
             self.updateGram(indexList, language)
+
             indexList.clear()
 
     def run(self):
@@ -175,13 +220,11 @@ class NaiveBayes():
             language = elements[2]
             data = ' '.join(elements[3:])
 
-            grams = self.buildGram("helH ell")
+            grams = self.buildGram(data)
             print("Grams list: ", grams)
             print("Number of grams: ", len(grams))
 
             self.train(grams, language)
-
-            break
 
 
 def main():
