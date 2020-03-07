@@ -85,6 +85,11 @@ class NaiveBayes():
             self.corpus = list(string.ascii_letters)
             self.corpus_size = len(self.corpus)
 
+    def getCharIndex(self, char):
+        try:
+            return self.corpus.index(char)
+        except ValueError as err:
+            print(err)
 
     def buildGram(self, data):
         grams = []
@@ -135,7 +140,6 @@ class NaiveBayes():
 
                     self.updateGram(indexList)
                     indexList.clear()
-
 
         elif language == 'ca':
             pass
