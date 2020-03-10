@@ -1,16 +1,3 @@
-### Vocabulary
-# v = 0 -> Fold the corpus to lowercase and use only the 26 letters of the alphabet [a-z]
-# v = 1 -> Distinguish up and low cases and use only the 26 letters of the alphabet [a-z, A-Z]
-# v = 2 -> Distinguish up and low cases and use all characters accepted by the built-in isalpha() method
-
-### N-gram
-# n = 1 -> character unigrams
-# n = 2 -> character bigrams
-# n = 3 -> character trigrams
-
-### Smoothing
-# s = {0,...,1}
-
 import string
 import numpy as np
 import math
@@ -40,11 +27,21 @@ class NaiveBayes():
     def getCorpus(self):
         return self.corpus
 
-    def getNGramEN(self):
-        return self.n_gram_en
+    def printNGrams(self):
+        print("EU")
+        print(self.n_gram_eu)
+        # print("CA")
+        # print(self.n_gram_ca)
+        # print("GL")
+        # print(self.n_gram_gl)
+        # print("ES")
+        # print(self.n_gram_es)
+        # print("EN")
+        # print(self.n_gram_en)
+        # print("PT")
+        # print(self.n_gram_pt)
 
-    def getNGramEU(self):
-        return self.n_gram_eu
+
 
     def getTrainingFile(self):
         return self.train_file_name
@@ -274,7 +271,6 @@ class NaiveBayes():
     def test(self, grams, language):
         indexList = []
         totalScore = 0
-        self.smooth()
 
         for gram in grams:
             for char in gram:
@@ -364,7 +360,7 @@ class NaiveBayes():
                 # print('Original: ', language)
                 # print('Model Guess: ', guesses[answer].language)
                 # i += 1
-                # if i == 100:
+                # if i == 20:
                 #     break
 
         self.calculateAccuracy(results, answers)
