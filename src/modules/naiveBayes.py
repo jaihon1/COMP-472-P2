@@ -13,6 +13,8 @@
 
 import string
 import numpy as np
+import math
+from .score import Score
 
 class NaiveBayes():
     def __init__(self, v, n, s, train_file_name, test_file_name):
@@ -33,6 +35,7 @@ class NaiveBayes():
 
         self.generateVocabulary()
         self.generateNgram()
+        self.accuracy = 0
 
     def getCorpus(self):
         return self.corpus
@@ -271,15 +274,29 @@ class NaiveBayes():
     def test(self, grams, language):
         indexList = []
         totalScore = 0
+        self.smooth()
 
         for gram in grams:
             for char in gram:
                 indexList.append(self.getCharIndex(char))
 
-            totalScore += self.getScore(indexList, language)
+            totalScore += math.log10(self.getScore(indexList, language))
             indexList.clear()
 
         return totalScore
+
+    def getMostAccurateLanguage(self, guesses):
+        index = np.argmax(guesses)
+        return index
+
+    def calculateAccuracy(self, results, answers):
+        errors = 0
+
+        for i, result in enumerate(results):
+            if result != answers[i]:
+                errors += 1
+
+        self.accuracy = 1 - errors/len(results)
 
 
     def runTrain(self):
@@ -303,6 +320,10 @@ class NaiveBayes():
 
 
     def runTest(self):
+        results = []
+        answers = []
+        i = 0
+
         # Test
         with open(self.test_file_name) as f:
             tweets = f.readlines()
@@ -320,23 +341,38 @@ class NaiveBayes():
                 grams = self.buildGram(data)
                 # print("Tweet: ", grams, language)
 
-                score_eu = self.test(grams, 'eu')
-                score_ca = self.test(grams, 'ca')
-                score_gl = self.test(grams, 'gl')
-                score_es = self.test(grams, 'es')
-                score_en = self.test(grams, 'en')
-                score_pt = self.test(grams, 'pt')
+                score_eu = Score('eu', self.test(grams, 'eu'))
+                score_ca = Score('ca', self.test(grams, 'ca'))
+                score_gl = Score('gl', self.test(grams, 'gl'))
+                score_es = Score('es', self.test(grams, 'es'))
+                score_en = Score('en', self.test(grams, 'en'))
+                score_pt = Score('pt', self.test(grams, 'pt'))
 
-                print('Original Language: ', language)
+                # print('score_eu', score_eu.score_value)
+                # print('score_ca', score_ca.score_value)
+                # print('score_gl', score_gl.score_value)
+                # print('score_es', score_es.score_value)
+                # print('score_en', score_en.score_value)
+                # print('score_pt', score_pt.score_value)
 
-                print('score_eu', score_eu)
-                print('score_ca', score_ca)
-                print('score_gl', score_gl)
-                print('score_es', score_es)
-                print('score_en', score_en)
-                print('score_pt', score_pt)
+                guesses = [score_eu, score_ca, score_gl, score_es, score_en, score_pt]
+                guesses_score = [score_eu.score_value, score_ca.score_value, score_gl.score_value, score_es.score_value, score_en.score_value, score_pt.score_value]
+                answer = self.getMostAccurateLanguage(guesses_score)
+                answers.append(language)
+                results.append(guesses[answer].language)
 
-                break;
+                # print('Original: ', language)
+                # print('Model Guess: ', guesses[answer].language)
+                # i += 1
+                # if i == 100:
+                #     break
+
+        self.calculateAccuracy(results, answers)
+        print('Accuracy: ', self.accuracy)
+
+
+
+
 
 
 def main():
