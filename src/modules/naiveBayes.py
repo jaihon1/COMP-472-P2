@@ -24,24 +24,38 @@ class NaiveBayes():
         self.generateNgram()
         self.accuracy = 0
 
+        self.eu_total = 0
+        self.ca_total = 0
+        self.gl_total = 0
+        self.es_total = 0
+        self.en_total = 0
+        self.pt_total = 0
+
+
     def getCorpus(self):
         return self.corpus
 
     def printNGrams(self):
         print("EU")
         print(self.n_gram_eu)
-        # print("CA")
-        # print(self.n_gram_ca)
-        # print("GL")
-        # print(self.n_gram_gl)
-        # print("ES")
-        # print(self.n_gram_es)
-        # print("EN")
-        # print(self.n_gram_en)
-        # print("PT")
-        # print(self.n_gram_pt)
+        print("CA")
+        print(self.n_gram_ca)
+        print("GL")
+        print(self.n_gram_gl)
+        print("ES")
+        print(self.n_gram_es)
+        print("EN")
+        print(self.n_gram_en)
+        print("PT")
+        print(self.n_gram_pt)
 
-
+    def printCounts(self):
+        print("EU", self.eu_total)
+        print("CA", self.ca_total)
+        print("GL", self.gl_total)
+        print("ES", self.es_total)
+        print("EN", self.en_total)
+        print("PT", self.pt_total)
 
     def getTrainingFile(self):
         return self.train_file_name
@@ -127,69 +141,76 @@ class NaiveBayes():
         self.n_gram_en = self.n_gram_en + self.smoothing
         self.n_gram_pt = self.n_gram_pt + self.smoothing
 
+        self.eu_total +=  self.corpus_size * self.smoothing
+        self.ca_total +=  self.corpus_size * self.smoothing
+        self.gl_total +=  self.corpus_size * self.smoothing
+        self.es_total +=  self.corpus_size * self.smoothing
+        self.en_total +=  self.corpus_size * self.smoothing
+        self.pt_total +=  self.corpus_size * self.smoothing
+
 
     def getScore(self, position, language):
         score = 0
 
         if language == 'eu':
             if self.n_gram_type == 1:
-                score = self.n_gram_eu[position[0]]
+                score = self.n_gram_eu[position[0]] / self.eu_total
 
             elif self.n_gram_type == 2:
-                score = self.n_gram_eu[position[0]][position[1]]
+                score = self.n_gram_eu[position[0]][position[1]] / self.eu_total
 
             elif self.n_gram_type == 3:
-                score = self.n_gram_eu[position[0]][position[1]][position[2]]
+                score = self.n_gram_eu[position[0]][position[1]][position[2]] / self.eu_total
 
         if language == 'ca':
             if self.n_gram_type == 1:
-                score = self.n_gram_ca[position[0]]
+                score = self.n_gram_ca[position[0]] / self.ca_total
 
             elif self.n_gram_type == 2:
-                score = self.n_gram_ca[position[0]][position[1]]
+                score = self.n_gram_ca[position[0]][position[1]] / self.ca_total
 
             elif self.n_gram_type == 3:
-                score = self.n_gram_ca[position[0]][position[1]][position[2]]
+                score = self.n_gram_ca[position[0]][position[1]][position[2]] / self.ca_total
 
         if language == 'gl':
             if self.n_gram_type == 1:
-                score = self.n_gram_gl[position[0]]
+                score = self.n_gram_gl[position[0]] / self.gl_total
 
             elif self.n_gram_type == 2:
-                score = self.n_gram_gl[position[0]][position[1]]
+                score = self.n_gram_gl[position[0]][position[1]] / self.gl_total
 
             elif self.n_gram_type == 3:
-                score = self.n_gram_gl[position[0]][position[1]][position[2]]
+                score = self.n_gram_gl[position[0]][position[1]][position[2]] / self.gl_total
 
         if language == 'es':
             if self.n_gram_type == 1:
-                score = self.n_gram_es[position[0]]
+                score = self.n_gram_es[position[0]] / self.es_total
 
             elif self.n_gram_type == 2:
-                score = self.n_gram_es[position[0]][position[1]]
+                score = self.n_gram_es[position[0]][position[1]] / self.es_total
 
             elif self.n_gram_type == 3:
-                score = self.n_gram_es[position[0]][position[1]][position[2]]
+                score = self.n_gram_es[position[0]][position[1]][position[2]] / self.es_total
 
         if language == 'en':
             if self.n_gram_type == 1:
-                score = self.n_gram_en[position[0]]
+                score = self.n_gram_en[position[0]] / self.en_total
 
             elif self.n_gram_type == 2:
-                score = self.n_gram_en[position[0]][position[1]]
+                score = self.n_gram_en[position[0]][position[1]] / self.en_total
 
             elif self.n_gram_type == 3:
-                score = self.n_gram_en[position[0]][position[1]][position[2]]
+                score = self.n_gram_en[position[0]][position[1]][position[2]] / self.en_total
 
         if language == 'pt':
             if self.n_gram_type == 1:
-                score = self.n_gram_pt[position[0]]
+                score = self.n_gram_pt[position[0]] / self.pt_total
 
             elif self.n_gram_type == 2:
-                score = self.n_gram_pt[position[0]][position[1]]
+                score = self.n_gram_pt[position[0]][position[1]] / self.pt_total
 
             elif self.n_gram_type == 3:
-                score = self.n_gram_pt[position[0]][position[1]][position[2]]
+                score = self.n_gram_pt[position[0]][position[1]][position[2]] / self.pt_total
 
         return score
 
@@ -256,6 +277,25 @@ class NaiveBayes():
                 self.n_gram_pt[position[0]][position[1]][position[2]] += 1
 
 
+    def updateCount(self, language):
+        if language == 'eu':
+            self.eu_total += 1
+
+        elif language == 'ca':
+            self.ca_total += 1
+
+        elif language == 'gl':
+            self.gl_total += 1
+
+        elif language == 'es':
+            self.es_total += 1
+
+        elif language == 'en':
+            self.en_total += 1
+
+        elif language == 'pt':
+            self.pt_total += 1
+
     def train(self, grams, language):
         indexList = []
 
@@ -264,6 +304,7 @@ class NaiveBayes():
                 indexList.append(self.getCharIndex(char))
 
             # print("train() ", indexList)
+            self.updateCount(language)
             self.updateGram(indexList, language)
 
             indexList.clear()

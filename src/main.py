@@ -19,16 +19,14 @@ def main():
     test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
     train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
 
-    model = NaiveBayes(0, 2, 1, train_file, test_file)
+    model = NaiveBayes(0, 3, 0.01, train_file, test_file)
 
     model.runTrain()
 
-    model.printNGrams()
     model.smooth()
 
     model.runTest()
 
-    model.printNGrams()
 
 if __name__ == '__main__':
     main()
