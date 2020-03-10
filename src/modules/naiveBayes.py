@@ -40,6 +40,9 @@ class NaiveBayes():
     def getNGramEN(self):
         return self.n_gram_en
 
+    def getNGramEU(self):
+        return self.n_gram_eu
+
     def getTrainingFile(self):
         return self.train_file_name
 
@@ -116,13 +119,79 @@ class NaiveBayes():
             print(err)
 
     # Smooth-add the corresponding gram
-    def smoothModel(self):
+    def smooth(self):
         self.n_gram_eu = self.n_gram_eu + self.smoothing
         self.n_gram_ca = self.n_gram_ca + self.smoothing
         self.n_gram_gl = self.n_gram_gl + self.smoothing
         self.n_gram_es = self.n_gram_es + self.smoothing
         self.n_gram_en = self.n_gram_en + self.smoothing
         self.n_gram_pt = self.n_gram_pt + self.smoothing
+
+
+    def getScore(self, position, language):
+        score = 0
+
+        if language == 'eu':
+            if self.n_gram_type == 1:
+                score = self.n_gram_eu[position[0]]
+
+            elif self.n_gram_type == 2:
+                score = self.n_gram_eu[position[0]][position[1]]
+
+            elif self.n_gram_type == 3:
+                score = self.n_gram_eu[position[0]][position[1]][position[2]]
+
+        if language == 'ca':
+            if self.n_gram_type == 1:
+                score = self.n_gram_ca[position[0]]
+
+            elif self.n_gram_type == 2:
+                score = self.n_gram_ca[position[0]][position[1]]
+
+            elif self.n_gram_type == 3:
+                score = self.n_gram_ca[position[0]][position[1]][position[2]]
+
+        if language == 'gl':
+            if self.n_gram_type == 1:
+                score = self.n_gram_gl[position[0]]
+
+            elif self.n_gram_type == 2:
+                score = self.n_gram_gl[position[0]][position[1]]
+
+            elif self.n_gram_type == 3:
+                score = self.n_gram_gl[position[0]][position[1]][position[2]]
+
+        if language == 'es':
+            if self.n_gram_type == 1:
+                score = self.n_gram_es[position[0]]
+
+            elif self.n_gram_type == 2:
+                score = self.n_gram_es[position[0]][position[1]]
+
+            elif self.n_gram_type == 3:
+                score = self.n_gram_es[position[0]][position[1]][position[2]]
+
+        if language == 'en':
+            if self.n_gram_type == 1:
+                score = self.n_gram_en[position[0]]
+
+            elif self.n_gram_type == 2:
+                score = self.n_gram_en[position[0]][position[1]]
+
+            elif self.n_gram_type == 3:
+                score = self.n_gram_en[position[0]][position[1]][position[2]]
+
+        if language == 'pt':
+            if self.n_gram_type == 1:
+                score = self.n_gram_pt[position[0]]
+
+            elif self.n_gram_type == 2:
+                score = self.n_gram_pt[position[0]][position[1]]
+
+            elif self.n_gram_type == 3:
+                score = self.n_gram_pt[position[0]][position[1]][position[2]]
+
+        return score
 
     # increment the corresponding occurence in the gram
     def updateGram(self, position, language):
@@ -190,36 +259,84 @@ class NaiveBayes():
     def train(self, grams, language):
         indexList = []
 
-        print("Training EU: ")
         for gram in grams:
             for char in gram:
                 indexList.append(self.getCharIndex(char))
 
-            print("train() ", indexList)
+            # print("train() ", indexList)
             self.updateGram(indexList, language)
 
             indexList.clear()
 
-    def run(self):
+    def test(self, grams, language):
+        indexList = []
+        totalScore = 0
+
+        for gram in grams:
+            for char in gram:
+                indexList.append(self.getCharIndex(char))
+
+            totalScore += self.getScore(indexList, language)
+            indexList.clear()
+
+        return totalScore
+
+
+    def runTrain(self):
+        # Train
         with open(self.train_file_name) as f:
             tweets = f.readlines()
 
         for tweet in tweets:
-            print(tweet)
+            elementsTrain = tweet.split()
 
-            elements = tweet.split()
+            if len(elementsTrain) > 0:
+                # Get all info from a tweet
+                userId = elementsTrain[0]
+                username = elementsTrain[1]
+                language = elementsTrain[2]
+                data = ' '.join(elementsTrain[3:])
+
+                grams = self.buildGram(data)
+
+                self.train(grams, language)
+
+
+    def runTest(self):
+        # Test
+        with open(self.test_file_name) as f:
+            tweets = f.readlines()
+
+        for tweet in tweets:
+            elementsTest = tweet.split()
 
             # Get all info from a tweet
-            userId = elements[0]
-            username = elements[1]
-            language = elements[2]
-            data = ' '.join(elements[3:])
+            if len(elementsTest) > 0:
+                userId = elementsTest[0]
+                username = elementsTest[1]
+                language = elementsTest[2]
+                data = ' '.join(elementsTest[3:])
 
-            grams = self.buildGram(data)
-            print("Grams list: ", grams)
-            print("Number of grams: ", len(grams))
+                grams = self.buildGram(data)
+                # print("Tweet: ", grams, language)
 
-            self.train(grams, language)
+                score_eu = self.test(grams, 'eu')
+                score_ca = self.test(grams, 'ca')
+                score_gl = self.test(grams, 'gl')
+                score_es = self.test(grams, 'es')
+                score_en = self.test(grams, 'en')
+                score_pt = self.test(grams, 'pt')
+
+                print('Original Language: ', language)
+
+                print('score_eu', score_eu)
+                print('score_ca', score_ca)
+                print('score_gl', score_gl)
+                print('score_es', score_es)
+                print('score_en', score_en)
+                print('score_pt', score_pt)
+
+                break;
 
 
 def main():
