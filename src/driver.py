@@ -11,7 +11,9 @@ def main():
     model = NeuralNet(vocabulary, train_file, test_file, custom_train_file)
 
     # model.cleanTrainData()
-    model.runTest()
+    # model.runTest()
+    # model.textToCsv()
+    model.train()
 
 if __name__ == '__main__':
     main()

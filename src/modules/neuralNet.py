@@ -9,9 +9,12 @@
 # https://medium.com/coinmonks/language-prediction-using-deep-neural-networks-42eb131444a5
 
 import tensorflow as tf
+from tensorflow import keras
 import numpy as np
+import pandas as pd
 import string
 import statistics
+import csv
 
 from .wordEncoding import WordEncoding
 
@@ -25,6 +28,7 @@ class NeuralNet():
         self.vocabulary_type = v
 
         self.generateVocabulary()
+
 
     def generateVocabulary(self):
         if self.vocabulary_type == 0:
@@ -75,6 +79,46 @@ class NeuralNet():
         # Forward pass in NN
         return 1
 
+
+    def train(self):
+        print("Training")
+        print('Reading train file')
+        training_data = pd.read_csv(self.custom_train_file, header=None, delim_whitespace=True, names=['word', 'label'])
+
+        input_data = training_data.drop('label', axis=1).values
+        output_data = training_data[['label']].values
+
+        print(output_data)
+
+        # model = keras.models.Sequential()
+        # model.add(keras.layers.Dense())
+
+        # model.compile(loss='mean_squared_error', optimizer='adam')
+
+        # model.fit(training_data, expected_output)
+
+        # error = model.evaluate(testing_data, expected_output)
+
+        # model.save('trained_model.h5')
+
+        # predictions = model.predict(new_data)
+
+
+
+    def trainDriver(self):
+        with open(self.custom_train_file) as f:
+            tweets = f.readlines()
+
+        for tweet in tweets:
+            elements = tweet.split()
+
+            if len(elements) > 0:
+                # Get all info from a tweet
+                word = elements[0]
+                label = elements[1]
+
+                self.train(word, label)
+
     def test(self, data):
         predictions = []
 
@@ -108,22 +152,6 @@ class NeuralNet():
                 guess = self.test(data_split)
                 print(guess)
 
-    # def train(self, word, label):
-
-    def trainDriver(self):
-        with open(self.custom_train_file) as f:
-            tweets = f.readlines()
-
-        for tweet in tweets:
-            elements = tweet.split()
-
-            if len(elements) > 0:
-                # Get all info from a tweet
-                word = elements[0]
-                label = elements[1]
-
-                self.train(word, label)
-
 
     def cleanTrainData(self):
         with open(self.train_file_name) as f:
@@ -156,6 +184,14 @@ class NeuralNet():
                             train_file.write('\n')
 
         print("Done cleaning.")
+
+    def textToCsv(self):
+        with open(self.custom_train_file, 'r') as in_file:
+            stripped = (line.strip() for line in in_file)
+            lines = (line.split(",") for line in stripped if line)
+            with open('train.csv', 'w') as out_file:
+                writer = csv.writer(out_file)
+                writer.writerows(lines)
 
 
 
