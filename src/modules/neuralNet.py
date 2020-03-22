@@ -10,6 +10,7 @@
 
 import tensorflow as tf
 from tensorflow import keras
+
 import numpy as np
 import pandas as pd
 import string
@@ -83,25 +84,34 @@ class NeuralNet():
     def train(self):
         print("Training")
         print('Reading train file')
-        training_data = pd.read_csv(self.custom_train_file, header=None, delim_whitespace=True, names=['word', 'label'])
+        training_data = pd.read_csv(self.custom_train_file, header=None, delim_whitespace=True)
+        training_data.columns = [*training_data.columns[:-1], 'label']
 
-        input_data = training_data.drop('label', axis=1).values
+        input_data = training_data.drop(training_data.columns[len(training_data.columns) - 1], axis=1).values
         output_data = training_data[['label']].values
 
+        print(input_data)
         print(output_data)
 
+        # # Build Model
         # model = keras.models.Sequential()
-        # model.add(keras.layers.Dense())
+        # model.add(keras.layers.Dense(50, input_dim=390, activation='relu'))
+        # model.add(keras.layers.Dense(100, activation='relu'))
+        # model.add(keras.layers.Dense(50, activation='relu'))
+        # model.add(keras.layers.Dense(100, activation='relu'))
+        # model.add(keras.layers.Dense(6, activation='linear'))
 
+        # # Compile Model
         # model.compile(loss='mean_squared_error', optimizer='adam')
 
-        # model.fit(training_data, expected_output)
+        # # Train Model
+        # model.fit(input_data, output_data)
 
-        # error = model.evaluate(testing_data, expected_output)
+        # # error = model.evaluate(testing_data, expected_output)
 
-        # model.save('trained_model.h5')
+        # # model.save('trained_model.h5')
 
-        # predictions = model.predict(new_data)
+        # # predictions = model.predict(new_data)
 
 
 

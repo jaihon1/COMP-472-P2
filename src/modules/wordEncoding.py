@@ -17,7 +17,7 @@ class WordEncoding():
     def setup(self):
         self.encode()
         self.flatten()
-        encoded_str = ''.join(str(value) for value in self.encoded_values_flatten)
+        encoded_str = ' '.join(str(value) for value in self.encoded_values_flatten)
 
         return encoded_str
 
