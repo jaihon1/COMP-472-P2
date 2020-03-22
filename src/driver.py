@@ -10,7 +10,8 @@ def main():
 
     model = NeuralNet(vocabulary, train_file, test_file, custom_train_file)
 
-    model.cleanTrainData()
+    # model.cleanTrainData()
+    model.runTest()
 
 if __name__ == '__main__':
     main()

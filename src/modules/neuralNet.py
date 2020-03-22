@@ -41,6 +41,17 @@ class NeuralNet():
             self.corpus_size = len(self.corpus)
 
 
+    # Convert word to lowercase
+    def cleanWord_v1(self, word):
+        if len(word) > 15:
+            return None
+        else:
+            for char in word.lower():
+                if (char not in self.corpus):
+                    return None
+
+        return word
+
     def cleanWord(self, word):
         if len(word) > 15:
             return None
@@ -68,10 +79,16 @@ class NeuralNet():
         predictions = []
 
         for word in data:
-            language = self.predictLanguage(word)
-            predictions.append(language)
+            clean_result = self.cleanWord_v1(word)
+            if clean_result is not None:
+                language = self.predictLanguage(word)
+                predictions.append(language)
 
-        return(statistics.mode(predictions))
+        if not predictions:
+            return 0
+        else:
+            return(statistics.mode(predictions))
+
 
     def runTest(self):
         with open(self.test_file_name) as f:
@@ -92,7 +109,6 @@ class NeuralNet():
                 print(guess)
 
     # def train(self, word, label):
-
 
     def trainDriver(self):
         with open(self.custom_train_file) as f:
@@ -133,11 +149,11 @@ class NeuralNet():
 
                         print(encoded_str)
 
-                        # with open('train.txt', 'a') as train_file:
-                        #     train_file.write(encoded_str)
-                        #     train_file.write(' ')
-                        #     train_file.write(language)
-                        #     train_file.write('\n')
+                        with open('train.txt', 'a') as train_file:
+                            train_file.write(encoded_str)
+                            train_file.write(' ')
+                            train_file.write(language)
+                            train_file.write('\n')
 
         print("Done cleaning.")
 
