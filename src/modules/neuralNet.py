@@ -20,15 +20,19 @@ import csv
 from .wordEncoding import WordEncoding
 
 class NeuralNet():
-    def __init__(self, v, train_file_name, test_file_name, custom_train_file):
+    def __init__(self, v, train_file_name, test_file_name, train_dataset, test_dataset, train_output, test_output):
         self.train_file_name = train_file_name
         self.test_file_name = test_file_name
-        self.custom_train_file = custom_train_file
+        self.train_dataset = train_dataset
+        self.test_dataset = test_dataset
         self.corpus = None
         self.corpus_size = 0
         self.vocabulary_type = v
 
         self.generateVocabulary()
+
+        self.train_dataset_output = train_output
+        self.test_dataset_output = test_output
 
 
     def generateVocabulary(self):
@@ -68,6 +72,25 @@ class NeuralNet():
         return word
 
 
+    def encodeLanguage(self, language):
+        if language == 'eu':
+            return '1 0 0 0 0 0'
+
+        elif language == 'ca':
+            return '0 1 0 0 0 0'
+
+        elif language == 'gl':
+            return '0 0 1 0 0 0'
+
+        elif language == 'es':
+            return '0 0 0 1 0 0'
+
+        elif language == 'en':
+            return '0 0 0 0 1 0'
+
+        elif language == 'pt':
+            return '0 0 0 0 0 1'
+
     def predictLanguage(self, word):
         # LANGUAGE ENCODING
         # eu = 0
@@ -83,35 +106,70 @@ class NeuralNet():
 
     def train(self):
         print("Training")
-        print('Reading train file')
-        training_data = pd.read_csv(self.custom_train_file, header=None, delim_whitespace=True)
+        print('Preparing train dataset')
+        training_data = pd.read_csv(self.train_dataset, header=None, delim_whitespace=True)
+        training_data_out = pd.read_csv(self.train_dataset_output, header=None, delim_whitespace=True)
         training_data.columns = [*training_data.columns[:-1], 'label']
 
-        input_data = training_data.drop(training_data.columns[len(training_data.columns) - 1], axis=1).values
-        output_data = training_data[['label']].values
+        train_input_data = training_data.drop(training_data.columns[len(training_data.columns) - 1], axis=1).values
+        train_output_data = training_data_out.values
+        # train_output_data = training_data[['label']].values
 
-        print(input_data)
-        print(output_data)
 
-        # # Build Model
-        # model = keras.models.Sequential()
-        # model.add(keras.layers.Dense(50, input_dim=390, activation='relu'))
-        # model.add(keras.layers.Dense(100, activation='relu'))
-        # model.add(keras.layers.Dense(50, activation='relu'))
-        # model.add(keras.layers.Dense(100, activation='relu'))
-        # model.add(keras.layers.Dense(6, activation='linear'))
+        # print(train_input_data)
+        # print(len(train_input_data))
+        # print(train_output_data)
+        # print(len(train_output_data))
+        print("DONE")
 
-        # # Compile Model
-        # model.compile(loss='mean_squared_error', optimizer='adam')
+        print('Preparing test dataset')
+        testing_data = pd.read_csv(self.test_dataset, header=None, delim_whitespace=True)
+        testing_data_out = pd.read_csv(self.test_dataset_output, header=None, delim_whitespace=True)
+        testing_data.columns = [*testing_data.columns[:-1], 'label']
 
-        # # Train Model
-        # model.fit(input_data, output_data)
+        test_input_data = testing_data.drop(testing_data.columns[len(testing_data.columns) - 1], axis=1).values
+        test_output_data = testing_data_out.values
+        # test_output_data = testing_data[['label']].values
 
-        # # error = model.evaluate(testing_data, expected_output)
+        # print(test_input_data)
+        # print(len(train_input_data))
+        # print(test_output_data)
+        # print(len(test_output_data))
+        print("DONE")
 
-        # # model.save('trained_model.h5')
+        # Build Model
+        model = keras.models.Sequential()
+        model.add(keras.layers.Dense(300, input_dim=390, activation='relu', name='layer1_1'))
+        model.add(keras.layers.Dense(200, activation='relu', name='layer1_2'))
+        model.add(keras.layers.Dense(100, activation='relu', name='layer1_3'))
+        model.add(keras.layers.Dense(6, activation='linear', name='output_layer'))
 
-        # # predictions = model.predict(new_data)
+        # Compile Model
+        model.compile(loss='mean_squared_error', optimizer='adam')
+
+        # Create Logger
+        RUN_NAME = 'run 1 with 50 nodes'
+        logger = keras.callbacks.TensorBoard(
+            log_dir = 'logs/{}'.format(RUN_NAME),
+            write_graph = True,
+            histogram_freq = 5
+        )
+
+        # Train Model
+        model.fit(train_input_data, train_output_data, epochs=5, shuffle=True, verbose=2, callbacks=[logger])
+
+        # Evaluate Model
+        error = model.evaluate(test_input_data, test_output_data, verbose=0 )
+        print('Test Error Rate: ', error)
+
+        predictions = model.predict(test_input_data)
+        for prediction in predictions:
+            result = np.where(prediction == np.amax(prediction))
+            print(result[0])
+
+        # model.save('trained_model.h5')
+
+        # predictions = model.predict(new_data)
 
 
 
@@ -185,12 +243,12 @@ class NeuralNet():
                         encoder = WordEncoding(word)
                         encoded_str = encoder.setup()
 
-                        print(encoded_str)
+                        language_encoded = self.encodeLanguage(language)
 
                         with open('train.txt', 'a') as train_file:
                             train_file.write(encoded_str)
                             train_file.write(' ')
-                            train_file.write(language)
+                            train_file.write(language_encoded)
                             train_file.write('\n')
 
         print("Done cleaning.")

@@ -5,10 +5,15 @@ def main():
     ## Reading files
     test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
     train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
-    custom_train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/train-encoded-spaced.txt'
+    train_dataset = '/Users/dzhay/Github/COMP-472-P2/datasets/train/train-encoded-spaced.txt'
+    test_dataset = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-encoded-spaced.txt'
+
+    train_output = '/Users/dzhay/Github/COMP-472-P2/datasets/train/train-output.txt'
+    test_ouput = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-output.txt'
     vocabulary = 0
 
-    model = NeuralNet(vocabulary, train_file, test_file, custom_train_file)
+    model = NeuralNet(vocabulary, train_file, test_file, train_dataset, test_dataset, train_output, test_ouput)
+
 
     # model.cleanTrainData()
     # model.runTest()
