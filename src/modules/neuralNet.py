@@ -156,13 +156,25 @@ class NeuralNet():
         )
 
         # Train Model
-        model.fit(train_input_data, train_output_data, epochs=5, shuffle=True, verbose=2, callbacks=[logger])
+        model.fit(train_input_data, train_output_data, epochs=10, shuffle=True, verbose=2, callbacks=[logger])
 
         # Evaluate Model
         error = model.evaluate(test_input_data, test_output_data, verbose=0 )
         print('Test Error Rate: ', error)
 
-        predictions = model.predict(test_input_data)
+
+        test = 'through'
+        encoder = WordEncoding(test)
+        encoded_str = encoder.setup()
+
+        test_input = np.empty([1, 390], dtype=int)
+        test_array = np.fromstring(encoded_str, dtype=int, sep=' ')
+        test_input[0] = test_array
+
+        print(test_input)
+        print(test_input.shape)
+
+        predictions = model.predict(test_input)
         for prediction in predictions:
             result = np.where(prediction == np.amax(prediction))
             print(result[0])
