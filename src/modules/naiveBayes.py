@@ -31,6 +31,13 @@ class NaiveBayes():
         self.accuracyEN = 0
         self.accuracyPT = 0
 
+        self.countEU = 0
+        self.countCA = 0
+        self.countGL = 0
+        self.countES = 0
+        self.countEN = 0
+        self.countPT = 0
+
         self.eu_total = 0
         self.ca_total = 0
         self.gl_total = 0
@@ -66,12 +73,12 @@ class NaiveBayes():
 
     def printAccuracy(self):
         print("GLOBAL ACCURACY ", self.accuracy)
-        print("EU ", self.accuracyEU)
-        print("CA ", self.accuracyCA)
-        print("GL ", self.accuracyGL)
-        print("ES ", self.accuracyES)
-        print("EN ", self.accuracyEN)
-        print("PT ", self.accuracyPT)
+        print("EU ", self.accuracyEU, self.countEU)
+        print("CA ", self.accuracyCA, self.countCA)
+        print("GL ", self.accuracyGL, self.countGL)
+        print("ES ", self.accuracyES, self.countES)
+        print("EN ", self.accuracyEN, self.countEN)
+        print("PT ", self.accuracyPT, self.countPT)
 
     def getTrainingFile(self):
         return self.train_file_name
@@ -351,54 +358,47 @@ class NaiveBayes():
         errorsEN = 0
         errorsPT = 0
 
-        countEU = 0
-        countCA = 0
-        countGL = 0
-        countES = 0
-        countEN = 0
-        countPT = 0
-
         for i, result in enumerate(results):
             if result != answers[i]:
                 errors += 1
 
             if answers[i] == 'eu':
-                countEU += 1
+                self.countEU += 1
                 if result != answers[i]:
                     errorsEU += 1
 
             elif answers[i] == 'ca':
-                countCA += 1
+                self.countCA += 1
                 if result != answers[i]:
                     errorsCA += 1
 
             elif answers[i] == 'gl':
-                countGL += 1
+                self.countGL += 1
                 if result != answers[i]:
                     errorsGL += 1
 
             elif answers[i] == 'es':
-                countES += 1
+                self.countES += 1
                 if result != answers[i]:
                     errorsES += 1
 
             elif answers[i] == 'en':
-                countEN += 1
+                self.countEN += 1
                 if result != answers[i]:
                     errorsEN += 1
 
             elif answers[i] == 'pt':
-                countPT += 1
+                self.countPT += 1
                 if result != answers[i]:
                     errorsPT += 1
 
         self.accuracy = 1 - errors/len(results)
-        self.accuracyEU = 1 - errorsEU/countEU
-        self.accuracyCA = 1 - errorsCA/countCA
-        self.accuracyGL = 1 - errorsGL/countGL
-        self.accuracyES = 1 - errorsES/countES
-        self.accuracyEN = 1 - errorsEN/countEN
-        self.accuracyPT = 1 - errorsPT/countPT
+        self.accuracyEU = 1 - errorsEU/self.countEU
+        self.accuracyCA = 1 - errorsCA/self.countCA
+        self.accuracyGL = 1 - errorsGL/self.countGL
+        self.accuracyES = 1 - errorsES/self.countES
+        self.accuracyEN = 1 - errorsEN/self.countEN
+        self.accuracyPT = 1 - errorsPT/self.countPT
 
 
 
