@@ -34,6 +34,32 @@ class NeuralNet():
         self.train_dataset_output = train_output
         self.test_dataset_output = test_output
 
+        self.model = None
+
+        self.accuracy = 0
+        self.accuracyEU = 0
+        self.accuracyCA = 0
+        self.accuracyGL = 0
+        self.accuracyES = 0
+        self.accuracyEN = 0
+        self.accuracyPT = 0
+
+        self.countEU = 0
+        self.countCA = 0
+        self.countGL = 0
+        self.countES = 0
+        self.countEN = 0
+        self.countPT = 0
+
+    def printAccuracy(self):
+        print("GLOBAL ACCURACY ", self.accuracy)
+        print("EU ", self.accuracyEU, self.countEU)
+        print("CA ", self.accuracyCA, self.countCA)
+        print("GL ", self.accuracyGL, self.countGL)
+        print("ES ", self.accuracyES, self.countES)
+        print("EN ", self.accuracyEN, self.countEN)
+        print("PT ", self.accuracyPT, self.countPT)
+
 
     def generateVocabulary(self):
         if self.vocabulary_type == 0:
@@ -55,11 +81,12 @@ class NeuralNet():
         if len(word) > 15:
             return None
         else:
-            for char in word.lower():
+            wordLower = word.lower()
+            for char in wordLower:
                 if (char not in self.corpus):
                     return None
 
-        return word
+            return wordLower
 
     def cleanWord(self, word):
         if len(word) > 15:
@@ -70,6 +97,78 @@ class NeuralNet():
                     return None
 
         return word
+
+    def languageToString(self, languageNum):
+        if languageNum == 0:
+            return 'en'
+        if languageNum == 1:
+            return 'ca'
+        if languageNum == 2:
+            return 'gl'
+        if languageNum == 3:
+            return 'es'
+        if languageNum == 4:
+            return 'en'
+        if languageNum == 5:
+            return 'pt'
+
+    def calculateAccuracy(self, results, answers):
+        errors = 0
+        errorsEU = 0
+        errorsCA = 0
+        errorsGL = 0
+        errorsES = 0
+        errorsEN = 0
+        errorsPT = 0
+
+        for i, result in enumerate(results):
+            if result != answers[i]:
+                errors += 1
+
+            if answers[i] == 'eu':
+                self.countEU += 1
+                if result != answers[i]:
+                    errorsEU += 1
+
+            elif answers[i] == 'ca':
+                self.countCA += 1
+                if result != answers[i]:
+                    errorsCA += 1
+
+            elif answers[i] == 'gl':
+                self.countGL += 1
+                if result != answers[i]:
+                    errorsGL += 1
+
+            elif answers[i] == 'es':
+                self.countES += 1
+                if result != answers[i]:
+                    errorsES += 1
+
+            elif answers[i] == 'en':
+                self.countEN += 1
+                if result != answers[i]:
+                    errorsEN += 1
+
+            elif answers[i] == 'pt':
+                self.countPT += 1
+                if result != answers[i]:
+                    errorsPT += 1
+
+        if len(results) != 0:
+            self.accuracy = 1 - errors/len(results)
+        if self.countEU != 0:
+            self.accuracyEU = 1 - errorsEU/self.countEU
+        if self.countCA != 0:
+            self.accuracyCA = 1 - errorsCA/self.countCA
+        if self.countGL != 0:
+            self.accuracyGL = 1 - errorsGL/self.countGL
+        if self.countES != 0:
+            self.accuracyES = 1 - errorsES/self.countES
+        if self.countEN != 0:
+            self.accuracyEN = 1 - errorsEN/self.countEN
+        if self.countPT != 0:
+            self.accuracyPT = 1 - errorsPT/self.countPT
 
 
     def encodeLanguage(self, language):
@@ -90,18 +189,6 @@ class NeuralNet():
 
         elif language == 'pt':
             return '0 0 0 0 0 1'
-
-    def predictLanguage(self, word):
-        # LANGUAGE ENCODING
-        # eu = 0
-        # ca = 1
-        # gl = 2
-        # es = 3
-        # en = 4
-        # pt = 5
-
-        # Forward pass in NN
-        return 1
 
 
     def train(self):
@@ -138,14 +225,14 @@ class NeuralNet():
         print("DONE")
 
         # Build Model
-        model = keras.models.Sequential()
-        model.add(keras.layers.Dense(300, input_dim=390, activation='relu', name='layer1_1'))
-        model.add(keras.layers.Dense(200, activation='relu', name='layer1_2'))
-        model.add(keras.layers.Dense(100, activation='relu', name='layer1_3'))
-        model.add(keras.layers.Dense(6, activation='linear', name='output_layer'))
+        self.model = keras.models.Sequential()
+        self.model.add(keras.layers.Dense(300, input_dim=390, activation='relu', name='layer1_1'))
+        self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_2'))
+        self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_3'))
+        self.model.add(keras.layers.Dense(6, activation='linear', name='output_layer'))
 
         # Compile Model
-        model.compile(loss='mean_squared_error', optimizer='adam')
+        self.model.compile(loss='mean_squared_error', optimizer='adam')
 
         # Create Logger
         RUN_NAME = 'run 1 with 50 nodes'
@@ -156,28 +243,12 @@ class NeuralNet():
         )
 
         # Train Model
-        model.fit(train_input_data, train_output_data, epochs=10, shuffle=True, verbose=2, callbacks=[logger])
+        self.model.fit(train_input_data, train_output_data, epochs=10, shuffle=True, verbose=2, callbacks=[logger])
 
         # Evaluate Model
-        error = model.evaluate(test_input_data, test_output_data, verbose=0 )
+        error = self.model.evaluate(test_input_data, test_output_data, verbose=0 )
         print('Test Error Rate: ', error)
 
-
-        test = 'through'
-        encoder = WordEncoding(test)
-        encoded_str = encoder.setup()
-
-        test_input = np.empty([1, 390], dtype=int)
-        test_array = np.fromstring(encoded_str, dtype=int, sep=' ')
-        test_input[0] = test_array
-
-        print(test_input)
-        print(test_input.shape)
-
-        predictions = model.predict(test_input)
-        for prediction in predictions:
-            result = np.where(prediction == np.amax(prediction))
-            print(result[0])
 
         # model.save('trained_model.h5')
 
@@ -186,7 +257,7 @@ class NeuralNet():
 
 
     def trainDriver(self):
-        with open(self.custom_train_file) as f:
+        with open(self.train_dataset) as f:
             tweets = f.readlines()
 
         for tweet in tweets:
@@ -197,7 +268,31 @@ class NeuralNet():
                 word = elements[0]
                 label = elements[1]
 
-                self.train(word, label)
+                self.train()
+
+    def predictLanguage(self, word):
+        # LANGUAGE ENCODING
+        # eu = 0
+        # ca = 1
+        # gl = 2
+        # es = 3
+        # en = 4
+        # pt = 5
+
+        encoder = WordEncoding(word)
+        encoded_str = encoder.setup()
+
+        test_input = np.empty([1, 390], dtype=int)
+        test_array = np.fromstring(encoded_str, dtype=int, sep=' ')
+        test_input[0] = test_array
+
+        # Forward pass in NN
+        predictions = self.model.predict(test_input)
+        for prediction in predictions:
+            result = np.where(prediction == np.amax(prediction))
+
+        return result[0][0]
+
 
     def test(self, data):
         predictions = []
@@ -205,16 +300,27 @@ class NeuralNet():
         for word in data:
             clean_result = self.cleanWord_v1(word)
             if clean_result is not None:
-                language = self.predictLanguage(word)
+                language = self.predictLanguage(clean_result)
                 predictions.append(language)
 
         if not predictions:
             return 0
         else:
-            return(statistics.mode(predictions))
+            try:
+                guess = statistics.mode(predictions)
+                return guess
+
+            except ValueError:
+                print('Found 2 equally common values...')
+                return None
+
 
 
     def runTest(self):
+        results = []
+        answers = []
+        i = 0
+
         with open(self.test_file_name) as f:
             tweets = f.readlines()
 
@@ -229,8 +335,21 @@ class NeuralNet():
                 data = ' '.join(elements[3:])
                 data_split = data.split()
 
-                guess = self.test(data_split)
-                print(guess)
+                answer = self.test(data_split)
+                if (i % 10) == 1:
+                    # i = 0
+                    print('Done 10 tweets..')
+
+                print(language, self.languageToString(answer))
+                answers.append(language)
+                results.append(self.languageToString(answer))
+                i += 1
+
+                if(i == 1000):
+                    break
+
+        self.calculateAccuracy(results, answers)
+        self.printAccuracy()
 
 
     def cleanTrainData(self):
@@ -266,7 +385,7 @@ class NeuralNet():
         print("Done cleaning.")
 
     def textToCsv(self):
-        with open(self.custom_train_file, 'r') as in_file:
+        with open(self.train_dataset, 'r') as in_file:
             stripped = (line.strip() for line in in_file)
             lines = (line.split(",") for line in stripped if line)
             with open('train.csv', 'w') as out_file:

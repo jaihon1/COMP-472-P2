@@ -19,6 +19,7 @@ def main():
     # model.runTest()
     # model.textToCsv()
     model.train()
+    model.runTest()
 
 if __name__ == '__main__':
     main()
