@@ -22,7 +22,14 @@ class NaiveBayes():
 
         self.generateVocabulary()
         self.generateNgram()
+
         self.accuracy = 0
+        self.accuracyEU = 0
+        self.accuracyCA = 0
+        self.accuracyGL = 0
+        self.accuracyES = 0
+        self.accuracyEN = 0
+        self.accuracyPT = 0
 
         self.eu_total = 0
         self.ca_total = 0
@@ -50,12 +57,21 @@ class NaiveBayes():
         print(self.n_gram_pt)
 
     def printCounts(self):
-        print("EU", self.eu_total)
-        print("CA", self.ca_total)
-        print("GL", self.gl_total)
-        print("ES", self.es_total)
-        print("EN", self.en_total)
-        print("PT", self.pt_total)
+        print("EU ", self.eu_total)
+        print("CA ", self.ca_total)
+        print("GL ", self.gl_total)
+        print("ES ", self.es_total)
+        print("EN ", self.en_total)
+        print("PT ", self.pt_total)
+
+    def printAccuracy(self):
+        print("GLOBAL ACCURACY ", self.accuracy)
+        print("EU ", self.accuracyEU)
+        print("CA ", self.accuracyCA)
+        print("GL ", self.accuracyGL)
+        print("ES ", self.accuracyES)
+        print("EN ", self.accuracyEN)
+        print("PT ", self.accuracyPT)
 
     def getTrainingFile(self):
         return self.train_file_name
@@ -328,12 +344,62 @@ class NaiveBayes():
 
     def calculateAccuracy(self, results, answers):
         errors = 0
+        errorsEU = 0
+        errorsCA = 0
+        errorsGL = 0
+        errorsES = 0
+        errorsEN = 0
+        errorsPT = 0
+
+        countEU = 0
+        countCA = 0
+        countGL = 0
+        countES = 0
+        countEN = 0
+        countPT = 0
 
         for i, result in enumerate(results):
             if result != answers[i]:
                 errors += 1
 
+            if answers[i] == 'eu':
+                countEU += 1
+                if result != answers[i]:
+                    errorsEU += 1
+
+            elif answers[i] == 'ca':
+                countCA += 1
+                if result != answers[i]:
+                    errorsCA += 1
+
+            elif answers[i] == 'gl':
+                countGL += 1
+                if result != answers[i]:
+                    errorsGL += 1
+
+            elif answers[i] == 'es':
+                countES += 1
+                if result != answers[i]:
+                    errorsES += 1
+
+            elif answers[i] == 'en':
+                countEN += 1
+                if result != answers[i]:
+                    errorsEN += 1
+
+            elif answers[i] == 'pt':
+                countPT += 1
+                if result != answers[i]:
+                    errorsPT += 1
+
         self.accuracy = 1 - errors/len(results)
+        self.accuracyEU = 1 - errorsEU/countEU
+        self.accuracyCA = 1 - errorsCA/countCA
+        self.accuracyGL = 1 - errorsGL/countGL
+        self.accuracyES = 1 - errorsES/countES
+        self.accuracyEN = 1 - errorsEN/countEN
+        self.accuracyPT = 1 - errorsPT/countPT
+
 
 
     def runTrain(self):
@@ -405,7 +471,7 @@ class NaiveBayes():
                 #     break
 
         self.calculateAccuracy(results, answers)
-        print('Accuracy: ', self.accuracy)
+        self.printAccuracy()
 
 
 
