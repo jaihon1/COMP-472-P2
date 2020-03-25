@@ -100,7 +100,7 @@ class NeuralNet():
 
     def languageToString(self, languageNum):
         if languageNum == 0:
-            return 'en'
+            return 'eu'
         if languageNum == 1:
             return 'ca'
         if languageNum == 2:
@@ -196,9 +196,10 @@ class NeuralNet():
         print('Preparing train dataset')
         training_data = pd.read_csv(self.train_dataset, header=None, delim_whitespace=True)
         training_data_out = pd.read_csv(self.train_dataset_output, header=None, delim_whitespace=True)
-        training_data.columns = [*training_data.columns[:-1], 'label']
+        # training_data.columns = [*training_data.columns[:-1], 'label']
 
-        train_input_data = training_data.drop(training_data.columns[len(training_data.columns) - 1], axis=1).values
+        # train_input_data = training_data.drop(training_data.columns[len(training_data.columns) - 1], axis=1).values
+        train_input_data = training_data.values
         train_output_data = training_data_out.values
         # train_output_data = training_data[['label']].values
 
@@ -212,9 +213,10 @@ class NeuralNet():
         print('Preparing test dataset')
         testing_data = pd.read_csv(self.test_dataset, header=None, delim_whitespace=True)
         testing_data_out = pd.read_csv(self.test_dataset_output, header=None, delim_whitespace=True)
-        testing_data.columns = [*testing_data.columns[:-1], 'label']
+        # testing_data.columns = [*testing_data.columns[:-1], 'label']
 
-        test_input_data = testing_data.drop(testing_data.columns[len(testing_data.columns) - 1], axis=1).values
+        # test_input_data = testing_data.drop(testing_data.columns[len(testing_data.columns) - 1], axis=1).values
+        test_input_data = testing_data.values
         test_output_data = testing_data_out.values
         # test_output_data = testing_data[['label']].values
 
@@ -337,22 +339,31 @@ class NeuralNet():
 
                 answer = self.test(data_split)
                 if (i % 10) == 1:
-                    # i = 0
+                    i = 0
                     print('Done 10 tweets..')
 
-                print(language, self.languageToString(answer))
                 answers.append(language)
                 results.append(self.languageToString(answer))
                 i += 1
 
-                if(i == 1000):
+                if(i == 2000):
                     break
 
         self.calculateAccuracy(results, answers)
         self.printAccuracy()
 
 
-    def cleanTrainData(self):
+    def cleanData(self):
+        countEU = 0
+        countCA = 0
+        countGL = 0
+        countES = 0
+        countEN = 0
+        countPT = 0
+
+        write = False
+        WORD_LIMIT = 500
+
         with open(self.train_file_name) as f:
             tweets = f.readlines()
 
@@ -367,6 +378,24 @@ class NeuralNet():
                 data = ' '.join(elements[3:])
                 data_split = data.split()
 
+                # if language == 'eu':
+                #     self.countEU += 1
+
+                # elif language == 'ca':
+                #     self.countCA += 1
+
+                # elif language == 'gl':
+                #     self.countGL += 1
+
+                # elif language == 'es':
+                #     self.countES += 1
+
+                # elif language == 'en':
+                #     self.countEN += 1
+
+                # elif language == 'pt':
+                #     self.countPT += 1
+
                 # Building train dataset with custom filter
                 for word in data_split:
                     clean_result = self.cleanWord(word)
@@ -376,11 +405,45 @@ class NeuralNet():
 
                         language_encoded = self.encodeLanguage(language)
 
-                        with open('train.txt', 'a') as train_file:
-                            train_file.write(encoded_str)
-                            train_file.write(' ')
-                            train_file.write(language_encoded)
-                            train_file.write('\n')
+                        if language == 'eu':
+                            if countEU < WORD_LIMIT:
+                                write = True
+                                countEU += 1
+
+                        elif language == 'ca':
+                            if countCA < WORD_LIMIT:
+                                write = True
+                                countCA += 1
+
+                        elif language == 'gl':
+                            if countGL < WORD_LIMIT:
+                                write = True
+                                countGL += 1
+
+                        elif language == 'es':
+                            if countES < WORD_LIMIT:
+                                write = True
+                                countES += 1
+
+                        elif language == 'en':
+                            if countEN < WORD_LIMIT:
+                                write = True
+                                countEN += 1
+
+                        elif language == 'pt':
+                            if countPT < WORD_LIMIT:
+                                write = True
+                                countPT += 1
+
+                        if write == True:
+                            with open('train-encoded-spaced-filtered.txt', 'a') as train_file:
+                                train_file.write(encoded_str)
+                                # train_file.write(' ')
+                                # train_file.write(language_encoded)
+                                train_file.write('\n')
+
+                            write = False
+
 
         print("Done cleaning.")
 
@@ -391,6 +454,8 @@ class NeuralNet():
             with open('train.csv', 'w') as out_file:
                 writer = csv.writer(out_file)
                 writer.writerows(lines)
+
+
 
 
 
