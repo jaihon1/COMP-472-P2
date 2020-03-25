@@ -228,9 +228,10 @@ class NeuralNet():
 
         # Build Model
         self.model = keras.models.Sequential()
-        self.model.add(keras.layers.Dense(300, input_dim=390, activation='relu', name='layer1_1'))
-        self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_2'))
-        self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_3'))
+        self.model.add(keras.layers.Dense(500, input_dim=390, activation='relu', name='layer1_1'))
+        self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_2'))
+        # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_3'))
+        # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_4'))
         self.model.add(keras.layers.Dense(6, activation='linear', name='output_layer'))
 
         # Compile Model
@@ -245,7 +246,14 @@ class NeuralNet():
         )
 
         # Train Model
-        self.model.fit(train_input_data, train_output_data, epochs=10, shuffle=True, verbose=2, callbacks=[logger])
+        self.model.fit(
+            train_input_data,
+            train_output_data,
+            epochs=15,
+            shuffle=True,
+            verbose=2,
+            validation_data=(test_input_data, test_output_data),
+            callbacks=[logger])
 
         # Evaluate Model
         error = self.model.evaluate(test_input_data, test_output_data, verbose=0 )
@@ -338,9 +346,9 @@ class NeuralNet():
                 data_split = data.split()
 
                 answer = self.test(data_split)
-                if (i % 10) == 1:
-                    i = 0
-                    print('Done 10 tweets..')
+                if (i % 100) == 1:
+                    # i = 0
+                    print('Done 100 tweets..')
 
                 answers.append(language)
                 results.append(self.languageToString(answer))
@@ -362,7 +370,7 @@ class NeuralNet():
         countPT = 0
 
         write = False
-        WORD_LIMIT = 500
+        WORD_LIMIT = 1000
 
         with open(self.train_file_name) as f:
             tweets = f.readlines()
@@ -436,10 +444,10 @@ class NeuralNet():
                                 countPT += 1
 
                         if write == True:
-                            with open('train-encoded-spaced-filtered.txt', 'a') as train_file:
-                                train_file.write(encoded_str)
+                            with open('train-output-filtered-1000.txt', 'a') as train_file:
+                                # train_file.write(encoded_str)
                                 # train_file.write(' ')
-                                # train_file.write(language_encoded)
+                                train_file.write(language_encoded)
                                 train_file.write('\n')
 
                             write = False
