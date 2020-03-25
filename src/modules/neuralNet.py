@@ -17,7 +17,12 @@ import string
 import statistics
 import csv
 
+
 from .wordEncoding import WordEncoding
+
+
+TOGGLE_LOAD_MODEL = True
+TOGGLE_LOAD_AND_TRAIN_MODEL = False
 
 class NeuralNet():
     def __init__(self, v, train_file_name, test_file_name, train_dataset, test_dataset, train_output, test_output):
@@ -227,43 +232,75 @@ class NeuralNet():
         print("DONE")
 
         # Build Model
-        self.model = keras.models.Sequential()
-        self.model.add(keras.layers.Dense(500, input_dim=390, activation='relu', name='layer1_1'))
-        self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_2'))
-        # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_3'))
-        # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_4'))
-        self.model.add(keras.layers.Dense(6, activation='linear', name='output_layer'))
 
-        # Compile Model
-        self.model.compile(loss='mean_squared_error', optimizer='adam')
+        if TOGGLE_LOAD_MODEL:
+            self.model = keras.models.load_model('trained_model.h5')
 
-        # Create Logger
-        RUN_NAME = 'run 1 with 50 nodes'
-        logger = keras.callbacks.TensorBoard(
-            log_dir = 'logs/{}'.format(RUN_NAME),
-            write_graph = True,
-            histogram_freq = 5
-        )
+        elif TOGGLE_LOAD_AND_TRAIN_MODEL:
+            self.model = keras.models.load_model('trained_model.h5')
 
-        # Train Model
-        self.model.fit(
-            train_input_data,
-            train_output_data,
-            epochs=15,
-            shuffle=True,
-            verbose=2,
-            validation_data=(test_input_data, test_output_data),
-            callbacks=[logger])
+            # Create Logger
+            RUN_NAME = 'run 1 with 50 nodes'
+            logger = keras.callbacks.TensorBoard(
+                log_dir = 'logs/{}'.format(RUN_NAME),
+                write_graph = True,
+                histogram_freq = 5
+            )
+
+            # Train Model
+            self.model.fit(
+                train_input_data,
+                train_output_data,
+                epochs=25,
+                shuffle=True,
+                verbose=2,
+                validation_data=(test_input_data, test_output_data),
+                callbacks=[logger])
+
+            # Save model
+            self.model.save('trained_model.h5')
+            print('Saved model')
+
+        else:
+            self.model = keras.models.Sequential()
+            self.model.add(keras.layers.Dense(400, input_dim=390, activation='relu', name='layer1_1'))
+            self.model.add(keras.layers.Dense(500, activation='relu', name='layer1_2'))
+            self.model.add(keras.layers.Dense(600, activation='relu', name='layer1_3'))
+            # self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_4'))
+            # self.model.add(keras.layers.Dense(300, activation='relu', name='layer1_5'))
+            # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_6'))
+            # self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_7'))
+            self.model.add(keras.layers.Dense(6, activation='linear', name='output_layer'))
+
+            # Compile Model
+            self.model.compile(loss='mean_squared_error', optimizer='adam')
+
+            # Create Logger
+            RUN_NAME = 'run 1 with 50 nodes'
+            logger = keras.callbacks.TensorBoard(
+                log_dir = 'logs/{}'.format(RUN_NAME),
+                write_graph = True,
+                histogram_freq = 5
+            )
+
+            # Train Model
+            self.model.fit(
+                train_input_data,
+                train_output_data,
+                epochs=15,
+                shuffle=True,
+                verbose=2,
+                validation_data=(test_input_data, test_output_data),
+                callbacks=[logger])
+
+            # Save model
+            self.model.save('trained_model.h5')
+            print('Saved model')
+
 
         # Evaluate Model
         error = self.model.evaluate(test_input_data, test_output_data, verbose=0 )
         print('Test Error Rate: ', error)
-
-
-        # model.save('trained_model.h5')
-
-        # predictions = model.predict(new_data)
-
 
 
     def trainDriver(self):
@@ -321,9 +358,8 @@ class NeuralNet():
                 return guess
 
             except ValueError:
-                print('Found 2 equally common values...')
+                # print('Found 2 equally common values...')
                 return None
-
 
 
     def runTest(self):
@@ -336,6 +372,7 @@ class NeuralNet():
 
         for tweet in tweets:
             elements = tweet.split()
+            i += 1
 
             if len(elements) > 0:
                 # Get all info from a tweet
@@ -346,16 +383,15 @@ class NeuralNet():
                 data_split = data.split()
 
                 answer = self.test(data_split)
+
                 if (i % 100) == 1:
-                    # i = 0
-                    print('Done 100 tweets..')
+                    print('Done tweets', i)
 
                 answers.append(language)
                 results.append(self.languageToString(answer))
-                i += 1
 
-                if(i == 2000):
-                    break
+                # if(i == 2000):
+                #     break
 
         self.calculateAccuracy(results, answers)
         self.printAccuracy()
@@ -370,7 +406,7 @@ class NeuralNet():
         countPT = 0
 
         write = False
-        WORD_LIMIT = 1000
+        WORD_LIMIT = 3000
 
         with open(self.train_file_name) as f:
             tweets = f.readlines()
@@ -444,10 +480,10 @@ class NeuralNet():
                                 countPT += 1
 
                         if write == True:
-                            with open('train-output-filtered-1000.txt', 'a') as train_file:
-                                # train_file.write(encoded_str)
+                            with open('train-encoded-spaced-filtered-3000.txt', 'a') as train_file:
+                                train_file.write(encoded_str)
                                 # train_file.write(' ')
-                                train_file.write(language_encoded)
+                                # train_file.write(language_encoded)
                                 train_file.write('\n')
 
                             write = False
@@ -462,9 +498,6 @@ class NeuralNet():
             with open('train.csv', 'w') as out_file:
                 writer = csv.writer(out_file)
                 writer.writerows(lines)
-
-
-
 
 
 
