@@ -21,8 +21,8 @@ import csv
 from .wordEncoding import WordEncoding
 
 
-TOGGLE_LOAD_MODEL = True
-TOGGLE_LOAD_AND_TRAIN_MODEL = False
+TOGGLE_LOAD_MODEL = False
+TOGGLE_LOAD_AND_TRAIN_MODEL = True
 
 class NeuralNet():
     def __init__(self, v, train_file_name, test_file_name, train_dataset, test_dataset, train_output, test_output):
@@ -251,7 +251,7 @@ class NeuralNet():
             self.model.fit(
                 train_input_data,
                 train_output_data,
-                epochs=25,
+                epochs=15,
                 shuffle=True,
                 verbose=2,
                 validation_data=(test_input_data, test_output_data),
@@ -265,8 +265,8 @@ class NeuralNet():
             self.model = keras.models.Sequential()
             self.model.add(keras.layers.Dense(400, input_dim=390, activation='relu', name='layer1_1'))
             self.model.add(keras.layers.Dense(500, activation='relu', name='layer1_2'))
-            self.model.add(keras.layers.Dense(600, activation='relu', name='layer1_3'))
-            # self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_4'))
+            # self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_3'))
+            # self.model.add(keras.layers.Dense(500, activation='relu', name='layer1_4'))
             # self.model.add(keras.layers.Dense(300, activation='relu', name='layer1_5'))
             # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_6'))
             # self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_7'))
@@ -390,8 +390,8 @@ class NeuralNet():
                 answers.append(language)
                 results.append(self.languageToString(answer))
 
-                # if(i == 2000):
-                #     break
+                if(i == 1000):
+                    break
 
         self.calculateAccuracy(results, answers)
         self.printAccuracy()
@@ -406,7 +406,7 @@ class NeuralNet():
         countPT = 0
 
         write = False
-        WORD_LIMIT = 3000
+        WORD_LIMIT = 12000
 
         with open(self.train_file_name) as f:
             tweets = f.readlines()
@@ -416,10 +416,14 @@ class NeuralNet():
 
             if len(elements) > 0:
                 # Get all info from a tweet
-                userId = elements[0]
-                username = elements[1]
-                language = elements[2]
-                data = ' '.join(elements[3:])
+                # userId = elements[0]
+                # username = elements[1]
+                # language = elements[2]
+                # data = ' '.join(elements[3:])
+                # data_split = data.split()
+
+                language = 'pt'
+                data = ' '.join(elements[0:])
                 data_split = data.split()
 
                 # if language == 'eu':
@@ -480,7 +484,8 @@ class NeuralNet():
                                 countPT += 1
 
                         if write == True:
-                            with open('train-encoded-spaced-filtered-3000.txt', 'a') as train_file:
+                            with open('train-encoded-spaced-filtered-extra-pt.txt', 'a') as train_file:
+                            # with open('train-output-filtered-extra-pt.txt', 'a') as train_file:
                                 train_file.write(encoded_str)
                                 # train_file.write(' ')
                                 # train_file.write(language_encoded)

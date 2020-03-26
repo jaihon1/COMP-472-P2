@@ -4,11 +4,11 @@ def main():
     print("This is the main driver!")
     ## Reading files
     test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
-    train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
-    train_dataset = '/Users/dzhay/Github/COMP-472-P2/datasets/train/train-encoded-spaced-filtered-3000.txt'
+    train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/pt-extra.txt'
+    train_dataset = '/Users/dzhay/Github/COMP-472-P2/datasets/train/train.txt'
     test_dataset = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-encoded-spaced-filtered-3000.txt'
 
-    train_output = '/Users/dzhay/Github/COMP-472-P2/datasets/train/train-output-filtered-3000.txt'
+    train_output = '/Users/dzhay/Github/COMP-472-P2/datasets/train/train-labels.txt'
     test_ouput = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-output-filtered-3000.txt'
     vocabulary = 0
 
