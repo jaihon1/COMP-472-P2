@@ -23,27 +23,42 @@ class NaiveBayes():
         self.generateVocabulary()
         self.generateNgram()
 
-        self.accuracy = 0
-        self.accuracyEU = 0
-        self.accuracyCA = 0
-        self.accuracyGL = 0
-        self.accuracyES = 0
-        self.accuracyEN = 0
-        self.accuracyPT = 0
-
-        self.countEU = 0
-        self.countCA = 0
-        self.countGL = 0
-        self.countES = 0
-        self.countEN = 0
-        self.countPT = 0
-
         self.eu_total = 0
         self.ca_total = 0
         self.gl_total = 0
         self.es_total = 0
         self.en_total = 0
         self.pt_total = 0
+
+        self.eu_recall = 0
+        self.ca_recall = 0
+        self.gl_recall = 0
+        self.es_recall = 0
+        self.en_recall = 0
+        self.pt_recall = 0
+
+        self.eu_precision = 0
+        self.ca_precision = 0
+        self.gl_precision = 0
+        self.es_precision = 0
+        self.en_precision = 0
+        self.pt_precision = 0
+
+        self.eu_f1 = 0
+        self.ca_f1 = 0
+        self.gl_f1 = 0
+        self.es_f1 = 0
+        self.en_f1 = 0
+        self.pt_f1 = 0
+
+        self.weighted_average_precision = 0
+        self.weighted_average_recall = 0
+
+        # Last column is for None -> no prediction
+        # Rows are predictions
+        # Columns are targets
+        self.confusion_matrix = np.zeros((6, 6), dtype=int)
+
 
 
     def getCorpus(self):
@@ -72,13 +87,34 @@ class NaiveBayes():
         print("PT ", self.pt_total)
 
     def printAccuracy(self):
-        print("GLOBAL ACCURACY ", self.accuracy)
-        print("EU ", self.accuracyEU, self.countEU)
-        print("CA ", self.accuracyCA, self.countCA)
-        print("GL ", self.accuracyGL, self.countGL)
-        print("ES ", self.accuracyES, self.countES)
-        print("EN ", self.accuracyEN, self.countEN)
-        print("PT ", self.accuracyPT, self.countPT)
+        print("GLOBAL ACCURACY", self.accuracy)
+
+    def printPrecision(self):
+        print('PRECISION')
+        print("EU ", self.eu_precision)
+        print("CA ", self.ca_precision)
+        print("GL ", self.gl_precision)
+        print("ES ", self.es_precision)
+        print("EN ", self.en_precision)
+        print("PT ", self.pt_precision)
+
+    def printRecall(self):
+        print('RECALL')
+        print("EU ", self.eu_recall)
+        print("CA ", self.ca_recall)
+        print("GL ", self.gl_recall)
+        print("ES ", self.es_recall)
+        print("EN ", self.en_recall)
+        print("PT ", self.pt_recall)
+
+    def printF1(self):
+        print('F1')
+        print("EU ", self.eu_f1)
+        print("CA ", self.ca_f1)
+        print("GL ", self.gl_f1)
+        print("ES ", self.es_f1)
+        print("EN ", self.en_f1)
+        print("PT ", self.pt_f1)
 
     def getTrainingFile(self):
         return self.train_file_name
@@ -349,56 +385,122 @@ class NaiveBayes():
         index = np.argmax(guesses)
         return index
 
-    def calculateAccuracy(self, results, answers):
-        errors = 0
-        errorsEU = 0
-        errorsCA = 0
-        errorsGL = 0
-        errorsES = 0
-        errorsEN = 0
-        errorsPT = 0
+    def buildConfusionMatrix(self, predictions, targets):
+        for i, prediction in enumerate(predictions):
+            if targets[i] == 'eu':
+                if prediction == 'eu':
+                    self.confusion_matrix[0][0] += 1
+                elif prediction == 'ca':
+                    self.confusion_matrix[1][0] += 1
+                elif prediction == 'gl':
+                    self.confusion_matrix[2][0] += 1
+                elif prediction == 'es':
+                    self.confusion_matrix[3][0] += 1
+                elif prediction == 'en':
+                    self.confusion_matrix[4][0] += 1
+                elif prediction == 'pt':
+                    self.confusion_matrix[5][0] += 1
 
-        for i, result in enumerate(results):
-            if result != answers[i]:
-                errors += 1
+            elif targets[i] == 'ca':
+                if prediction == 'eu':
+                    self.confusion_matrix[0][1] += 1
+                elif prediction == 'ca':
+                    self.confusion_matrix[1][1] += 1
+                elif prediction == 'gl':
+                    self.confusion_matrix[2][1] += 1
+                elif prediction == 'es':
+                    self.confusion_matrix[3][1] += 1
+                elif prediction == 'en':
+                    self.confusion_matrix[4][1] += 1
+                elif prediction == 'pt':
+                    self.confusion_matrix[5][1] += 1
 
-            if answers[i] == 'eu':
-                self.countEU += 1
-                if result != answers[i]:
-                    errorsEU += 1
+            elif targets[i] == 'gl':
+                if prediction == 'eu':
+                    self.confusion_matrix[0][2] += 1
+                elif prediction == 'ca':
+                    self.confusion_matrix[1][2] += 1
+                elif prediction == 'gl':
+                    self.confusion_matrix[2][2] += 1
+                elif prediction == 'es':
+                    self.confusion_matrix[3][2] += 1
+                elif prediction == 'en':
+                    self.confusion_matrix[4][2] += 1
+                elif prediction == 'pt':
+                    self.confusion_matrix[5][2] += 1
 
-            elif answers[i] == 'ca':
-                self.countCA += 1
-                if result != answers[i]:
-                    errorsCA += 1
+            elif targets[i] == 'es':
+                if prediction == 'eu':
+                    self.confusion_matrix[0][3] += 1
+                elif prediction == 'ca':
+                    self.confusion_matrix[1][3] += 1
+                elif prediction == 'gl':
+                    self.confusion_matrix[2][3] += 1
+                elif prediction == 'es':
+                    self.confusion_matrix[3][3] += 1
+                elif prediction == 'en':
+                    self.confusion_matrix[4][3] += 1
+                elif prediction == 'pt':
+                    self.confusion_matrix[5][3] += 1
 
-            elif answers[i] == 'gl':
-                self.countGL += 1
-                if result != answers[i]:
-                    errorsGL += 1
+            elif targets[i] == 'en':
+                if prediction == 'eu':
+                    self.confusion_matrix[0][4] += 1
+                elif prediction == 'ca':
+                    self.confusion_matrix[1][4] += 1
+                elif prediction == 'gl':
+                    self.confusion_matrix[2][4] += 1
+                elif prediction == 'es':
+                    self.confusion_matrix[3][4] += 1
+                elif prediction == 'en':
+                    self.confusion_matrix[4][4] += 1
+                elif prediction == 'pt':
+                    self.confusion_matrix[5][4] += 1
 
-            elif answers[i] == 'es':
-                self.countES += 1
-                if result != answers[i]:
-                    errorsES += 1
+            elif targets[i] == 'pt':
+                if prediction == 'eu':
+                    self.confusion_matrix[0][5] += 1
+                elif prediction == 'ca':
+                    self.confusion_matrix[1][5] += 1
+                elif prediction == 'gl':
+                    self.confusion_matrix[2][5] += 1
+                elif prediction == 'es':
+                    self.confusion_matrix[3][5] += 1
+                elif prediction == 'en':
+                    self.confusion_matrix[4][5] += 1
+                elif prediction == 'pt':
+                    self.confusion_matrix[5][5] += 1
 
-            elif answers[i] == 'en':
-                self.countEN += 1
-                if result != answers[i]:
-                    errorsEN += 1
+    def calculateStats(self):
+        column_sums = np.sum(self.confusion_matrix, axis = 0)
+        row_sums = np.sum(self.confusion_matrix, axis=1)
+        table_sum = np.sum(self.confusion_matrix)
+        diagonal_sum = np.trace(self.confusion_matrix, dtype=int)
 
-            elif answers[i] == 'pt':
-                self.countPT += 1
-                if result != answers[i]:
-                    errorsPT += 1
+        self.accuracy = diagonal_sum / table_sum
 
-        self.accuracy = 1 - errors/len(results)
-        self.accuracyEU = 1 - errorsEU/self.countEU
-        self.accuracyCA = 1 - errorsCA/self.countCA
-        self.accuracyGL = 1 - errorsGL/self.countGL
-        self.accuracyES = 1 - errorsES/self.countES
-        self.accuracyEN = 1 - errorsEN/self.countEN
-        self.accuracyPT = 1 - errorsPT/self.countPT
+        self.eu_recall = self.confusion_matrix[0][0] / column_sums[0]
+        self.ca_recall = self.confusion_matrix[1][1] / column_sums[1]
+        self.gl_recall = self.confusion_matrix[2][2] / column_sums[2]
+        self.es_recall = self.confusion_matrix[3][3] / column_sums[3]
+        self.en_recall = self.confusion_matrix[4][4] / column_sums[4]
+        self.pt_recall = self.confusion_matrix[5][5] / column_sums[5]
+
+        self.eu_precision = self.confusion_matrix[0][0] / row_sums[0]
+        self.ca_precision = self.confusion_matrix[1][1] / row_sums[1]
+        self.gl_precision = self.confusion_matrix[2][2] / row_sums[2]
+        self.es_precision = self.confusion_matrix[3][3] / row_sums[3]
+        self.en_precision = self.confusion_matrix[4][4] / row_sums[4]
+        self.pt_precision = self.confusion_matrix[5][5] / row_sums[5]
+
+        self.eu_f1 = (2 * self.eu_precision * self.eu_recall) / (self.eu_precision + self.eu_recall)
+        self.ca_f1 = (2 * self.ca_precision * self.ca_recall) / (self.ca_precision + self.ca_recall)
+        self.gl_f1 = (2 * self.gl_precision * self.gl_recall) / (self.gl_precision + self.gl_recall)
+        self.es_f1 = (2 * self.es_precision * self.es_recall) / (self.es_precision + self.es_recall)
+        self.en_f1 = (2 * self.en_precision * self.en_recall) / (self.en_precision + self.en_recall)
+        self.pt_f1 = (2 * self.pt_precision * self.pt_recall) / (self.pt_precision + self.pt_recall)
+
+
 
 
 
@@ -423,8 +525,8 @@ class NaiveBayes():
 
 
     def runTest(self):
-        results = []
-        answers = []
+        predictions = []
+        targets = []
         i = 0
 
         # Test
@@ -460,9 +562,9 @@ class NaiveBayes():
 
                 guesses = [score_eu, score_ca, score_gl, score_es, score_en, score_pt]
                 guesses_score = [score_eu.score_value, score_ca.score_value, score_gl.score_value, score_es.score_value, score_en.score_value, score_pt.score_value]
-                answer = self.getMostAccurateLanguage(guesses_score)
-                answers.append(language)
-                results.append(guesses[answer].language)
+                prediction = self.getMostAccurateLanguage(guesses_score)
+                targets.append(language)
+                predictions.append(guesses[prediction].language)
 
                 # print('Original: ', language)
                 # print('Model Guess: ', guesses[answer].language)
@@ -470,8 +572,13 @@ class NaiveBayes():
                 # if i == 20:
                 #     break
 
-        self.calculateAccuracy(results, answers)
+        self.buildConfusionMatrix(predictions, targets)
+        self.calculateStats()
         self.printAccuracy()
+        self.printPrecision()
+        self.printRecall()
+        self.printF1()
+        print(self.confusion_matrix)
 
 
 
