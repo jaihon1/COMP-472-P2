@@ -189,26 +189,26 @@ class Stats():
 
         self.accuracy = diagonal_sum / table_sum
 
-        self.eu_recall = self.confusion_matrix[0][0] / column_sums[0]
-        self.ca_recall = self.confusion_matrix[1][1] / column_sums[1]
-        self.gl_recall = self.confusion_matrix[2][2] / column_sums[2]
-        self.es_recall = self.confusion_matrix[3][3] / column_sums[3]
-        self.en_recall = self.confusion_matrix[4][4] / column_sums[4]
-        self.pt_recall = self.confusion_matrix[5][5] / column_sums[5]
+        self.eu_recall = self.confusion_matrix[0][0] / column_sums[0] if column_sums[0] else 0
+        self.ca_recall = self.confusion_matrix[1][1] / column_sums[1] if column_sums[1] else 0
+        self.gl_recall = self.confusion_matrix[2][2] / column_sums[2] if column_sums[2] else 0
+        self.es_recall = self.confusion_matrix[3][3] / column_sums[3] if column_sums[3] else 0
+        self.en_recall = self.confusion_matrix[4][4] / column_sums[4] if column_sums[4] else 0
+        self.pt_recall = self.confusion_matrix[5][5] / column_sums[5] if column_sums[5] else 0
 
-        self.eu_precision = self.confusion_matrix[0][0] / row_sums[0]
-        self.ca_precision = self.confusion_matrix[1][1] / row_sums[1]
-        self.gl_precision = self.confusion_matrix[2][2] / row_sums[2]
-        self.es_precision = self.confusion_matrix[3][3] / row_sums[3]
-        self.en_precision = self.confusion_matrix[4][4] / row_sums[4]
-        self.pt_precision = self.confusion_matrix[5][5] / row_sums[5]
+        self.eu_precision = self.confusion_matrix[0][0] / row_sums[0] if row_sums[0] else 0
+        self.ca_precision = self.confusion_matrix[1][1] / row_sums[1] if row_sums[1] else 0
+        self.gl_precision = self.confusion_matrix[2][2] / row_sums[2] if row_sums[2] else 0
+        self.es_precision = self.confusion_matrix[3][3] / row_sums[3] if row_sums[3] else 0
+        self.en_precision = self.confusion_matrix[4][4] / row_sums[4] if row_sums[4] else 0
+        self.pt_precision = self.confusion_matrix[5][5] / row_sums[5] if row_sums[5] else 0
 
-        self.eu_f1 = (2 * self.eu_precision * self.eu_recall) / (self.eu_precision + self.eu_recall)
-        self.ca_f1 = (2 * self.ca_precision * self.ca_recall) / (self.ca_precision + self.ca_recall)
-        self.gl_f1 = (2 * self.gl_precision * self.gl_recall) / (self.gl_precision + self.gl_recall)
-        self.es_f1 = (2 * self.es_precision * self.es_recall) / (self.es_precision + self.es_recall)
-        self.en_f1 = (2 * self.en_precision * self.en_recall) / (self.en_precision + self.en_recall)
-        self.pt_f1 = (2 * self.pt_precision * self.pt_recall) / (self.pt_precision + self.pt_recall)
+        self.eu_f1 = (2 * self.eu_precision * self.eu_recall) / (self.eu_precision + self.eu_recall) if (self.eu_precision + self.eu_recall) else 0
+        self.ca_f1 = (2 * self.ca_precision * self.ca_recall) / (self.ca_precision + self.ca_recall) if (self.ca_precision + self.ca_recall) else 0
+        self.gl_f1 = (2 * self.gl_precision * self.gl_recall) / (self.gl_precision + self.gl_recall) if (self.gl_precision + self.gl_recall) else 0
+        self.es_f1 = (2 * self.es_precision * self.es_recall) / (self.es_precision + self.es_recall) if (self.es_precision + self.es_recall) else 0
+        self.en_f1 = (2 * self.en_precision * self.en_recall) / (self.en_precision + self.en_recall) if (self.en_precision + self.en_recall) else 0
+        self.pt_f1 = (2 * self.pt_precision * self.pt_recall) / (self.pt_precision + self.pt_recall) if (self.pt_precision + self.pt_recall) else 0
 
         self.macro_F1 = (self.eu_f1 + self.ca_f1 + self.gl_f1 + self.es_f1 + self.en_f1 + self.pt_f1) / 6
         self.weighed_average_F1 = (
@@ -217,7 +217,7 @@ class Stats():
             self.gl_f1*column_sums[2] +
             self.es_f1*column_sums[3] +
             self.en_f1*column_sums[4] +
-            self.pt_f1*column_sums[5]) / 6
+            self.pt_f1*column_sums[5]) / table_sum
 
 
 
