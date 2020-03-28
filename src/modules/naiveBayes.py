@@ -170,9 +170,8 @@ class NaiveBayes():
             self.corpus = list(string.ascii_letters)
             self.corpus_size = len(self.corpus)
 
-        # MUST USE isalpha() method
         elif self.vocabulary_type == 2:
-            self.corpus = list(string.ascii_letters)
+            self.corpus = self.getIsAlphaCorpus()
             self.corpus_size = len(self.corpus)
 
 
@@ -525,7 +524,22 @@ class NaiveBayes():
             self.pt_f1*column_sums[5]) / 6
 
 
+    def getIsAlphaCorpus(self):
+        corpus = list()
+        # Train
+        with open(self.train_file_name) as f:
+            tweets = f.readlines()
 
+        for tweet in tweets:
+            elementsTrain = tweet.split()
+
+            if len(elementsTrain) > 0:
+                # Get all info from a tweet
+                data = ' '.join(elementsTrain[3:])
+                for char in data:
+                    if char.isalpha():
+                        corpus.append(char)
+        return corpus
 
 
     def runTrain(self):
