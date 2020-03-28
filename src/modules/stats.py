@@ -218,7 +218,24 @@ class Stats():
             self.es_f1*column_sums[3] +
             self.en_f1*column_sums[4] +
             self.pt_f1*column_sums[5]) / 6
+    
+    def outputClassPrecisions(self):
+        # eu-P, ca-P, gl-P, es-P, en-P and pt-P
+        classPrecision = str(round(self.eu_precision,4)) + '  ' + str(round(self.ca_precision, 4)) + '  ' + str(round(self.gl_precision, 4)) + '  ' 
+        classPrecision += str(round(self.es_precision, 4)) + '  ' + str(round(self.en_precision, 4)) + '  ' + str(round(self.pt_precision, 4))
+        return classPrecision
 
+    def outputClassRecalls(self):
+        # eu-R, ca-R, gl-R, es-R, en-R and pt-R
+        classRecall = str(round(self.eu_recall, 4)) + '  ' + str(round(self.ca_recall, 4)) + '  ' + str(round(self.gl_recall, 4)) + '  '
+        classRecall += str(round(self.es_recall, 4)) + '  ' + str(round(self.en_recall, 4)) + '  ' + str(round(self.pt_recall, 4))
+        return classRecall
+
+    def outputClassF1(self):
+         # eu-F, ca-F, gl-F, es-F, en-F and pt-F
+        classF1 = str(round(self.eu_f1, 4)) + '  ' + str(round(self.ca_f1, 4)) + '  ' + str(round(self.gl_f1, 4)) + '  ' 
+        classF1 += str(round(self.es_f1, 4)) + '  ' + str(round(self.en_f1, 4)) + '  ' + str(round(self.pt_f1, 4))
+        return classF1
 
 
 

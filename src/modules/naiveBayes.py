@@ -410,12 +410,18 @@ class NaiveBayes():
                 else:
                     label = 'wrong'
                 
+                # trace file
                 outputFile.trace(userId, predictedLanguage, scoreOfPrediction, language, label)
 
         stats = Stats(predictions, targets)
         stats.buildConfusionMatrix()
         stats.calculateStats()
         stats.printStats()
+        
+        # eval file
+        outputFile.overallEvaluation(stats.accuracy, stats.outputClassPrecisions(), stats.outputClassRecalls(), stats.outputClassF1(), stats.macro_F1, stats.weighed_average_F1)
+        
+
 
 
 
