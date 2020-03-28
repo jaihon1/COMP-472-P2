@@ -20,8 +20,10 @@ from modules.naiveBayes import NaiveBayes
 def main():
 
     ## Reading files
-    test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
-    train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
+    # test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
+    # train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
+    test_file = '/Users/Dana/git/COMP-472-P2/datasets/test/test-tweets-given.txt'
+    train_file = '/Users/Dana/git/COMP-472-P2/datasets/train/training-tweets.txt'
 
     model = NaiveBayes(1, 3, 0.001, train_file, test_file)
 
