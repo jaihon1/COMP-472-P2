@@ -19,6 +19,7 @@ class NaiveBayes():
         self.n_gram_pt = None
         self.grams_total = 0
         self.smoothing = s
+        self.not_appear_char = 0 # single entry of characters not in the training set but isAlpha is true and vocab_type == 2
         self.train_file_name = train_file_name
         self.test_file_name = test_file_name
 
@@ -103,6 +104,32 @@ class NaiveBayes():
             self.corpus = self.getIsAlphaCorpus()
             self.corpus_size = len(self.corpus)
 
+    def buildGramTest(self, data):
+        grams = []
+        if self.n_gram_type == 1:
+            for char in data:
+                if (char in self.corpus):
+                    grams.append(char)
+                elif char.isalpha():
+                    self.not_appear_char += 1
+
+        elif self.n_gram_type == 2:
+            for i, char in enumerate(data):
+                if i < (len(data) - 1):
+                    if (char in self.corpus) and (data[i+1] in self.corpus):
+                        grams.append(char + data[i+1])
+                    elif char.isalpha() and (data[i+1].isalpha()):
+                        self.not_appear_char += 1
+
+        elif self.n_gram_type == 3:
+            for i, char in enumerate(data):
+                if i < (len(data) - 2):
+                    if (char in self.corpus) and (data[i+1] in self.corpus) and (data[i+2] in self.corpus):
+                        grams.append(char + data[i+1] + data[i+2])
+                    elif char.isalpha() and (data[i+1].isalpha()) and (data[i+2].isalpha()):
+                        self.not_appear_char += 1
+
+        return grams
 
     def buildGram(self, data):
         grams = []
@@ -125,12 +152,32 @@ class NaiveBayes():
 
         return grams
 
+
     # Returns the index of the given char in the vocabulary
     def getCharIndex(self, char):
         try:
             return self.corpus.index(char)
         except ValueError as err:
             print(err)
+
+    # get the list of characters from the training set for which isalpha() == true
+    def getIsAlphaCorpus(self):
+        corpus = list()
+        # Train
+        with open(self.train_file_name, encoding='utf8') as f:
+            tweets = f.readlines()
+
+        for tweet in tweets:
+            elementsTrain = tweet.split()
+
+
+            if len(elementsTrain) > 0:
+                # Get all info from a tweet
+                data = ' '.join(elementsTrain[3:])
+                for char in data:
+                    if char.isalpha() and char not in corpus:
+                        corpus.append(char)
+        return corpus
 
     # Smooth-add the corresponding gram
     def smooth(self):
@@ -328,7 +375,7 @@ class NaiveBayes():
 
     def runTrain(self):
         # Train
-        with open(self.train_file_name) as f:
+        with open(self.train_file_name, encoding='utf8') as f:
             tweets = f.readlines()
 
         for tweet in tweets:
@@ -352,7 +399,7 @@ class NaiveBayes():
         i = 0
 
         # Test
-        with open(self.test_file_name) as f:
+        with open(self.test_file_name, encoding='utf8') as f:
             tweets = f.readlines()
 
         for tweet in tweets:
@@ -365,7 +412,10 @@ class NaiveBayes():
                 language = elementsTest[2]
                 data = ' '.join(elementsTest[3:])
 
-                grams = self.buildGram(data)
+                if (self.vocabulary_type == 2):
+                    grams = self.buildGramTest(data)
+                else:
+                    grams = self.buildGram(data)
                 # print("Tweet: ", grams, language)
 
                 score_eu = Score('eu', self.test(grams, 'eu'))
