@@ -51,8 +51,15 @@ class NaiveBayes():
         self.en_f1 = 0
         self.pt_f1 = 0
 
-        self.weighted_average_precision = 0
-        self.weighted_average_recall = 0
+        self.eu_total_count = 0
+        self.ca_total_count = 0
+        self.gl_total_count = 0
+        self.es_total_count = 0
+        self.en_total_count = 0
+        self.pt_total_count = 0
+
+        self.macro_F1 = 0
+        self.weighed_average_F1 = 0
 
         # Last column is for None -> no prediction
         # Rows are predictions
@@ -115,6 +122,12 @@ class NaiveBayes():
         print("ES ", self.es_f1)
         print("EN ", self.en_f1)
         print("PT ", self.pt_f1)
+
+    def printMacroF1(self):
+        print("MACRO F1", self.macro_F1)
+
+    def printWeighedAverageF1(self):
+        print("WEIGHED AVERAGE F1", self.weighed_average_F1)
 
     def getTrainingFile(self):
         return self.train_file_name
@@ -472,7 +485,9 @@ class NaiveBayes():
                     self.confusion_matrix[5][5] += 1
 
     def calculateStats(self):
+        # Total per category (Targets)
         column_sums = np.sum(self.confusion_matrix, axis = 0)
+        # Total per category (Predictions)
         row_sums = np.sum(self.confusion_matrix, axis=1)
         table_sum = np.sum(self.confusion_matrix)
         diagonal_sum = np.trace(self.confusion_matrix, dtype=int)
@@ -499,6 +514,15 @@ class NaiveBayes():
         self.es_f1 = (2 * self.es_precision * self.es_recall) / (self.es_precision + self.es_recall)
         self.en_f1 = (2 * self.en_precision * self.en_recall) / (self.en_precision + self.en_recall)
         self.pt_f1 = (2 * self.pt_precision * self.pt_recall) / (self.pt_precision + self.pt_recall)
+
+        self.macro_F1 = (self.eu_f1 + self.ca_f1 + self.gl_f1 + self.es_f1 + self.en_f1 + self.pt_f1) / 6
+        self.weighed_average_F1 = (
+            self.eu_f1*column_sums[0] +
+            self.ca_f1*column_sums[1] +
+            self.gl_f1*column_sums[2] +
+            self.es_f1*column_sums[3] +
+            self.en_f1*column_sums[4] +
+            self.pt_f1*column_sums[5]) / 6
 
 
 
@@ -578,6 +602,8 @@ class NaiveBayes():
         self.printPrecision()
         self.printRecall()
         self.printF1()
+        self.printMacroF1()
+        self.printWeighedAverageF1()
         print(self.confusion_matrix)
 
 
