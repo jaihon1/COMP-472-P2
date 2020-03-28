@@ -19,15 +19,12 @@ from modules.naiveBayes import NaiveBayes
 
 def main():
 
-    try:
+    # try:
         ## Reading files
         train_file = input('Enter the training filename: ')
         test_file = input('Enter the test filename: ')
 
-        print(train_file)
-        print(test_file)
-
-        model = NaiveBayes(0, 3, 0.001, train_file, test_file)
+        model = NaiveBayes(2, 3, 0.0001, train_file, test_file)
 
         model.runTrain()
 
@@ -35,8 +32,8 @@ def main():
 
         model.runTest()
 
-    except ValueError as err:
-        print(err)
+    # except ValueError as err:
+    #     print(err)
 
 if __name__ == '__main__':
     main()
