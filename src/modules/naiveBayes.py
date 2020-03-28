@@ -2,6 +2,7 @@ import string
 import numpy as np
 import math
 from .score import Score
+from modules.output import Output
 
 class NaiveBayes():
     def __init__(self, v, n, s, train_file_name, test_file_name):
@@ -595,6 +596,24 @@ class NaiveBayes():
                 # i += 1
                 # if i == 20:
                 #     break
+                
+        
+                # Information for output files
+                outputFile = Output(self.vocabulary_type, self.n_gram_type, self.smoothing)
+                predictedLanguage = guesses[prediction].language
+
+                # score of predictedLanguage
+                for score in guesses:
+                    if (predictedLanguage == score.getLanguage()):
+                        scoreOfPrediction = score.getScore()
+
+                # correct/wrong label
+                if(predictedLanguage == language):
+                    label = 'correct'
+                else:
+                    label = 'wrong'
+                
+                outputFile.trace(userId, predictedLanguage, scoreOfPrediction, language, label)
 
         self.buildConfusionMatrix(predictions, targets)
         self.calculateStats()
