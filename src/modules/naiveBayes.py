@@ -98,9 +98,8 @@ class NaiveBayes():
             self.corpus = list(string.ascii_letters)
             self.corpus_size = len(self.corpus)
 
-        # MUST USE isalpha() method
         elif self.vocabulary_type == 2:
-            self.corpus = list(string.ascii_letters)
+            self.corpus = self.getIsAlphaCorpus()
             self.corpus_size = len(self.corpus)
 
 
