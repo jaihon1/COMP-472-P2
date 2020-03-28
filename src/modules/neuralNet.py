@@ -19,6 +19,7 @@ import csv
 
 
 from .wordEncoding import WordEncoding
+from .stats import Stats
 
 
 TOGGLE_LOAD_MODEL = True
@@ -546,13 +547,10 @@ class NeuralNet():
 
                     write = False
 
-        self.buildConfusionMatrix(predictions, targets)
-        self.calculateStats()
-        self.printAccuracy()
-        self.printPrecision()
-        self.printRecall()
-        self.printF1()
-        print(self.confusion_matrix)
+        stats = Stats(predictions, targets)
+        stats.buildConfusionMatrix()
+        stats.printStats()
+
 
 
     def cleanData(self):

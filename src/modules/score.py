@@ -1,5 +1,5 @@
 class Score():
-    def __init__(self, language, score_value, ):
+    def __init__(self, language, score_value):
         self.language = language
         self.score_value = score_value
 

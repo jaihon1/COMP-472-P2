@@ -19,20 +19,24 @@ from modules.naiveBayes import NaiveBayes
 
 def main():
 
-    ## Reading files
-    # test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
-    # train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
-    test_file = '/Users/Dana/git/COMP-472-P2/datasets/test/test-tweets-given.txt'
-    train_file = '/Users/Dana/git/COMP-472-P2/datasets/train/training-tweets.txt'
+    try:
+        ## Reading files
+        train_file = input('Enter the training filename: ')
+        test_file = input('Enter the test filename: ')
 
-    model = NaiveBayes(1, 3, 0.001, train_file, test_file)
+        print(train_file)
+        print(test_file)
 
-    model.runTrain()
+        model = NaiveBayes(0, 3, 0.001, train_file, test_file)
 
-    model.smooth()
+        model.runTrain()
 
-    model.runTest()
+        model.smooth()
 
+        model.runTest()
+
+    except ValueError as err:
+        print(err)
 
 if __name__ == '__main__':
     main()
