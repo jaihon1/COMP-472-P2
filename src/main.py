@@ -19,8 +19,11 @@ from modules.naiveBayes import NaiveBayes
 
 def main():
     # Reading files
-    train_file = input('Enter the training filename: ')
-    test_file = input('Enter the test filename: ')
+    # train_file = input('Enter the training filename: ')
+    # test_file = input('Enter the test filename: ')
+
+    train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
+    test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
 
     model = NaiveBayes(2, 3, 0.0001, train_file, test_file)
 

@@ -41,7 +41,7 @@ class Stats():
         # Last column is for None -> no prediction
         # Rows are predictions
         # Columns are targets
-        self.confusion_matrix = np.zeros((6, 6), dtype=int)
+        self.confusion_matrix = np.zeros((7, 6), dtype=int)
 
 
     def printAccuracy(self):
@@ -108,6 +108,8 @@ class Stats():
                     self.confusion_matrix[4][0] += 1
                 elif prediction == 'pt':
                     self.confusion_matrix[5][0] += 1
+                else:
+                    self.confusion_matrix[6][0] += 1
 
             elif self.targets[i] == 'ca':
                 if prediction == 'eu':
@@ -122,6 +124,8 @@ class Stats():
                     self.confusion_matrix[4][1] += 1
                 elif prediction == 'pt':
                     self.confusion_matrix[5][1] += 1
+                else:
+                    self.confusion_matrix[6][1] += 1
 
             elif self.targets[i] == 'gl':
                 if prediction == 'eu':
@@ -136,6 +140,8 @@ class Stats():
                     self.confusion_matrix[4][2] += 1
                 elif prediction == 'pt':
                     self.confusion_matrix[5][2] += 1
+                else:
+                    self.confusion_matrix[6][2] += 1
 
             elif self.targets[i] == 'es':
                 if prediction == 'eu':
@@ -150,6 +156,8 @@ class Stats():
                     self.confusion_matrix[4][3] += 1
                 elif prediction == 'pt':
                     self.confusion_matrix[5][3] += 1
+                else:
+                    self.confusion_matrix[6][3] += 1
 
             elif self.targets[i] == 'en':
                 if prediction == 'eu':
@@ -164,6 +172,8 @@ class Stats():
                     self.confusion_matrix[4][4] += 1
                 elif prediction == 'pt':
                     self.confusion_matrix[5][4] += 1
+                else:
+                    self.confusion_matrix[6][4] += 1
 
             elif self.targets[i] == 'pt':
                 if prediction == 'eu':
@@ -178,6 +188,8 @@ class Stats():
                     self.confusion_matrix[4][5] += 1
                 elif prediction == 'pt':
                     self.confusion_matrix[5][5] += 1
+                else:
+                    self.confusion_matrix[6][5] += 1
 
     def calculateStats(self):
         # Total per category (Targets)

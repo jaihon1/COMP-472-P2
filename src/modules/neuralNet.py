@@ -320,8 +320,8 @@ class NeuralNet():
         countEN = 0
         countPT = 0
 
-        write = True
-        TWEET_LIMIT = 1000
+        write = False
+        TWEET_LIMIT = 500
 
         with open(self.test_file_name) as f:
             tweets = f.readlines()
@@ -367,9 +367,6 @@ class NeuralNet():
                         write = True
                         countPT += 1
 
-                if (i % 100) == 1:
-                    print('Done tweets', i)
-
                 if write:
                     i += 1
                     if (i % 100) == 1:
@@ -379,7 +376,7 @@ class NeuralNet():
                     targets.append(language)
                     predictions.append(self.languageToString(prediction))
 
-                    # write = False
+                    write = False
 
         stats = Stats(predictions, targets)
         stats.buildConfusionMatrix()
