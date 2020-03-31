@@ -225,15 +225,15 @@ class NeuralNet():
     def runTest(self):
         predictions = []
         targets = []
-        i = 0
 
+        # Variables for a limited run
+        i = 0
         countEU = 0
         countCA = 0
         countGL = 0
         countES = 0
         countEN = 0
         countPT = 0
-
         write = True
         TWEET_LIMIT = 500
 
@@ -251,6 +251,7 @@ class NeuralNet():
                 data = ' '.join(elements[3:])
                 data_split = data.split()
 
+                # Logic for a limited run
                 if language == 'eu':
                     if countEU < TWEET_LIMIT:
                         write = True
@@ -289,14 +290,12 @@ class NeuralNet():
                     prediction = self.test(data_split)
                     targets.append(language)
                     predictions.append(self.languageToString(prediction))
-
                     # write = False
 
         stats = Stats(predictions, targets)
         stats.buildConfusionMatrix()
         stats.calculateStats()
         stats.printStats()
-
 
     def cleanTrainData(self):
         with open(self.train_file_name) as f:
