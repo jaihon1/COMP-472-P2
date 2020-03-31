@@ -1,4 +1,5 @@
 from modules.neuralNet import NeuralNet
+import time
 
 def main():
     print("This is the main driver!")
@@ -9,10 +10,20 @@ def main():
 
     model = NeuralNet(vocabulary, train_file, test_file)
 
+    start_time = time.time()
+
     model.cleanTrainData()
     model.cleanTestData()
+    clean_time = time.time() - start_time
+    print("--- Duration of Cleaning: %s seconds ---" % (clean_time))
+
     model.train()
+    train_time = time.time() - start_time - clean_time
+    print("--- Duration of Training: %s seconds ---" % (train_time))
+
     model.runTest()
+    test_time = time.time() - start_time - train_time
+    print("--- Duration of Testing: %s seconds ---" % (test_time))
 
 if __name__ == '__main__':
     main()

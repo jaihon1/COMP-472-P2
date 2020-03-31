@@ -16,6 +16,7 @@
 # (1, 3, 0.01) = 0.8455 accuracy
 
 from modules.naiveBayes import NaiveBayes
+import time
 
 def main():
     # Reading files
@@ -25,13 +26,19 @@ def main():
     train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
     test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
 
-    model = NaiveBayes(2, 3, 0.0001, train_file, test_file)
+    model = NaiveBayes(2, 3, 0.001, train_file, test_file)
+
+    # Initiate Timer
+    start_time = time.time()
 
     model.runTrain()
-
     model.smooth()
+    train_time = time.time() - start_time
+    print("--- Duration of Training: %s seconds ---" % (train_time))
 
     model.runTest()
+    test_time = time.time() - start_time - train_time
+    print("--- Duration of Testing: %s seconds ---" % (test_time))
 
 
 if __name__ == '__main__':

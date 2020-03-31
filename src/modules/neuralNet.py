@@ -29,7 +29,7 @@ from .wordEncoding import WordEncoding
 from .stats import Stats
 
 # Toggles
-TOGGLE_LOAD_MODEL = True
+TOGGLE_LOAD_MODEL = False
 
 class NeuralNet():
     def __init__(self, v, train_file_name, test_file_name):
@@ -146,7 +146,7 @@ class NeuralNet():
         else:
             self.model = keras.models.Sequential()
             self.model.add(keras.layers.Dense(600, input_dim=390, activation='relu', name='layer1_1'))
-            self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_2'))
+            self.model.add(keras.layers.Dense(600, activation='relu', name='layer1_2'))
             self.model.add(keras.layers.Dense(600, activation='relu', name='layer1_3'))
             # self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_4'))
             # self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_5'))
