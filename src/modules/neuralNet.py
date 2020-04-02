@@ -23,13 +23,12 @@ import numpy as np
 import pandas as pd
 import string
 import statistics
-import csv
 
 from .wordEncoding import WordEncoding
 from .stats import Stats
 
 # Toggles
-TOGGLE_LOAD_MODEL = False
+TOGGLE_LOAD_MODEL = True
 
 class NeuralNet():
     def __init__(self, v, train_file_name, test_file_name):
@@ -139,30 +138,37 @@ class NeuralNet():
         test_output = testing_data_output_raw.values
         print("DONE")
 
+
+        layer_1 = 377
+        layer_2 = 233
+        layer_3 = 377
+        # layer_4 = 16
+        # layer_5 = 16
+
         # Build Model
         if TOGGLE_LOAD_MODEL:
-            self.model = keras.models.load_model('trained_model.h5')
+            self.model = keras.models.load_model('run-with-266-183-nodes.h5')
 
         else:
             self.model = keras.models.Sequential()
-            self.model.add(keras.layers.Dense(600, input_dim=390, activation='relu', name='layer1_1'))
-            self.model.add(keras.layers.Dense(600, activation='relu', name='layer1_2'))
-            self.model.add(keras.layers.Dense(600, activation='relu', name='layer1_3'))
-            # self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_4'))
-            # self.model.add(keras.layers.Dense(400, activation='relu', name='layer1_5'))
+            self.model.add(keras.layers.Dense(layer_1, input_dim=390, activation='relu', name='layer1_1'))
+            self.model.add(keras.layers.Dense(layer_2, activation='relu', name='layer1_2'))
+            self.model.add(keras.layers.Dense(layer_3, activation='relu', name='layer1_3'))
+            # self.model.add(keras.layers.Dense(layer_4, activation='relu', name='layer1_4'))
+            # self.model.add(keras.layers.Dense(layer_5, activation='relu', name='layer1_5'))
             # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_6'))
             # self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_7'))
             self.model.add(keras.layers.Dense(6, activation='softmax', name='output_layer'))
 
             # Compile Model
             self.model.compile(
-                loss='categorical_crossentropy',
-                optimizer='adam',
-                metrics=['accuracy']
+                loss = 'categorical_crossentropy',
+                optimizer = 'adam',
+                metrics = ['accuracy', tf.keras.metrics.Precision(), tf.keras.metrics.Recall()]
             )
 
             # Create Logger
-            RUN_NAME = 'run 1 with 600 400 600 nodes, adam'
+            RUN_NAME = 'run-with-{}-{}-{}-nodes'.format(layer_1, layer_2, layer_3)
             logger = keras.callbacks.TensorBoard(
                 log_dir = 'logs/{}'.format(RUN_NAME),
                 write_graph = True,
@@ -170,7 +176,7 @@ class NeuralNet():
             )
 
             # Create Checkpoint Saver
-            checkpointer = keras.callbacks.ModelCheckpoint('trained_model.h5', monitor='val_loss', verbose=1, save_best_only=True, mode='min')
+            checkpointer = keras.callbacks.ModelCheckpoint('{}.h5'.format(RUN_NAME), monitor='val_loss', verbose=1, save_best_only=True, mode='min')
 
             # Train Model
             self.model.fit(
@@ -184,8 +190,9 @@ class NeuralNet():
                 callbacks=[logger, checkpointer])
 
         # Evaluate Model
-        error = self.model.evaluate(test_input, test_output, verbose=0 )
+        error = self.model.evaluate(test_input, test_output, verbose=0)
         print('Test Error Rate: ', error)
+        print(self.model.summary())
 
     def predictLanguage(self, word):
         encoder = WordEncoding(word)

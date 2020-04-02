@@ -26,7 +26,7 @@ def main():
     train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
     test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
 
-    model = NaiveBayes(2, 3, 0.001, train_file, test_file)
+    model = NaiveBayes(0, 3, 0.001, train_file, test_file)
 
     # Initiate Timer
     start_time = time.time()
