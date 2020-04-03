@@ -147,7 +147,7 @@ class NeuralNet():
 
         # Build Model
         if TOGGLE_LOAD_MODEL:
-            self.model = keras.models.load_model('run-with-266-183-nodes.h5')
+            self.model = keras.models.load_model('not_bad_model_with_extra_data.h5')
 
         else:
             self.model = keras.models.Sequential()
@@ -182,7 +182,7 @@ class NeuralNet():
             self.model.fit(
                 train_input,
                 train_output,
-                epochs=10,
+                epochs=30,
                 # validation_split=0.20,
                 shuffle=True,
                 # verbose=2,
