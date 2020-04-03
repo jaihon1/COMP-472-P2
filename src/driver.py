@@ -2,7 +2,6 @@ from modules.neuralNet import NeuralNet
 import time
 
 def main():
-    print("This is the main driver!")
     ## Reading files
     test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
     train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
@@ -12,18 +11,18 @@ def main():
 
     start_time = time.time()
 
-    # model.cleanTrainData()
-    # model.cleanTestData()
-    # clean_time = time.time() - start_time
-    # print("--- Duration of Cleaning: %s seconds ---" % (clean_time))
+    model.cleanTrainData()
+    model.cleanTestData()
+    clean_time = time.time() - start_time
+    print("--- Duration of Cleaning: %s seconds ---" % (clean_time))
 
     model.train()
-    # train_time = time.time() - start_time - clean_time
-    # print("--- Duration of Training: %s seconds ---" % (train_time))
+    train_time = time.time() - start_time - clean_time
+    print("--- Duration of Training: %s seconds ---" % (train_time))
 
     model.runTest()
-    # test_time = time.time() - start_time - train_time
-    # print("--- Duration of Testing: %s seconds ---" % (test_time))
+    test_time = time.time() - start_time - train_time
+    print("--- Duration of Testing: %s seconds ---" % (test_time))
 
 if __name__ == '__main__':
     main()

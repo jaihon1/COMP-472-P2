@@ -28,7 +28,7 @@ from .wordEncoding import WordEncoding
 from .stats import Stats
 
 # Toggles
-TOGGLE_LOAD_MODEL = True
+TOGGLE_LOAD_MODEL = False
 
 class NeuralNet():
     def __init__(self, v, train_file_name, test_file_name):
@@ -151,13 +151,13 @@ class NeuralNet():
 
         else:
             self.model = keras.models.Sequential()
-            self.model.add(keras.layers.Dense(layer_1, input_dim=390, activation='relu', name='layer1_1'))
-            self.model.add(keras.layers.Dense(layer_2, activation='relu', name='layer1_2'))
-            self.model.add(keras.layers.Dense(layer_3, activation='relu', name='layer1_3'))
-            # self.model.add(keras.layers.Dense(layer_4, activation='relu', name='layer1_4'))
-            # self.model.add(keras.layers.Dense(layer_5, activation='relu', name='layer1_5'))
-            # self.model.add(keras.layers.Dense(200, activation='relu', name='layer1_6'))
-            # self.model.add(keras.layers.Dense(100, activation='relu', name='layer1_7'))
+            self.model.add(keras.layers.Dense(layer_1, input_dim=390, activation='relu', name='layer_1'))
+            self.model.add(keras.layers.Dense(layer_2, activation='relu', name='layer_2'))
+            self.model.add(keras.layers.Dense(layer_3, activation='relu', name='layer_3'))
+            # self.model.add(keras.layers.Dense(layer_4, activation='relu', name='layer_4'))
+            # self.model.add(keras.layers.Dense(layer_5, activation='relu', name='layer_5'))
+            # self.model.add(keras.layers.Dense(200, activation='relu', name='layer_6'))
+            # self.model.add(keras.layers.Dense(100, activation='relu', name='layer_7'))
             self.model.add(keras.layers.Dense(6, activation='softmax', name='output_layer'))
 
             # Compile Model
