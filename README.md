@@ -1,5 +1,8 @@
 # COMP-472-P2
 https://github.com/jaihon1/COMP-472-P2/
+
+# Deliverable 1
+Requested deliverable generated files are under 'test_run_output' folder in root
 # Instructions
 ### Required Models:
 1. Navigate to project root directory
