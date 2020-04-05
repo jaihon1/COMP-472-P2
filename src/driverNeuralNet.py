@@ -2,27 +2,35 @@ from modules.neuralNet import NeuralNet
 import time
 
 def main():
-    ## Reading files
-    test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
-    train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
-    vocabulary = 0
+    # Reading files
+    train_file = input('Enter the training filename: ')
+    test_file = input('Enter the test filename: ')
 
-    model = NeuralNet(vocabulary, train_file, test_file)
-
+    # Setup
+    model = NeuralNet(train_file, test_file)
     start_time = time.time()
 
+    # Start Model
+    print("--- Started Cleaning ---")
     model.cleanTrainData()
     model.cleanTestData()
-    # clean_time = time.time() - start_time
-    # print("--- Duration of Cleaning: %s seconds ---" % (clean_time))
+    clean_time = time.time() - start_time
+    print("--- Ended Cleaning ---")
+    print("--- Duration of Cleaning: %s seconds ---" % (clean_time))
 
+    # Training
+    print("--- Started Training ---")
     model.train()
-    # train_time = time.time() - start_time - clean_time
-    # print("--- Duration of Training: %s seconds ---" % (train_time))
+    train_time = time.time() - start_time - clean_time
+    print("--- Ended Training ---")
+    print("--- Duration of Training: %s seconds ---" % (train_time))
 
+    # Testing
+    print("--- Started Testing ---")
     model.runTest()
-    # test_time = time.time() - start_time - train_time
-    # print("--- Duration of Testing: %s seconds ---" % (test_time))
+    test_time = time.time() - start_time - train_time
+    print("--- Ended Testing ---")
+    print("--- Duration of Testing: %s seconds ---" % (test_time))
 
 if __name__ == '__main__':
     main()

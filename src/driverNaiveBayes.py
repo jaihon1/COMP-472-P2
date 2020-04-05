@@ -20,24 +20,32 @@ import time
 
 def main():
     # Reading files
-    # train_file = input('Enter the training filename: ')
-    # test_file = input('Enter the test filename: ')
+    train_file = input('Enter the training filename: ')
+    test_file = input('Enter the test filename: ')
 
-    train_file = '/Users/dzhay/Github/COMP-472-P2/datasets/train/training-tweets.txt'
-    test_file = '/Users/dzhay/Github/COMP-472-P2/datasets/test/test-tweets-given.txt'
-
+    print("--- Creating Model ---")
     model = NaiveBayes(2, 2, 0.3, train_file, test_file)
 
     # Initiate Timer
     start_time = time.time()
 
+    # Training
+    print("--- Started Training ---")
     model.runTrain()
+    print("--- Ended Training ---")
+
+    # Smoothing
+    print("--- Started Smoothing ---")
     model.smooth()
     train_time = time.time() - start_time
+    print("--- Ended Smoothing ---")
     print("--- Duration of Training: %s seconds ---" % (train_time))
 
+    # Testing
+    print("--- Started Testing ---")
     model.runTest()
     test_time = time.time() - start_time - train_time
+    print("--- Ended Testing ---")
     print("--- Duration of Testing: %s seconds ---" % (test_time))
 
 
