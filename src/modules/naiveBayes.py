@@ -2,7 +2,7 @@ import string
 import numpy as np
 import math
 from .score import Score
-from modules.output import Output
+from modules.outputNaiveBayes import OutputNaiveBayes
 from .stats import Stats
 
 class NaiveBayes():
@@ -396,7 +396,6 @@ class NaiveBayes():
     def runTest(self):
         predictions = []
         targets = []
-        i = 0
 
         # Test
         with open(self.test_file_name, encoding='utf8') as f:
@@ -416,7 +415,6 @@ class NaiveBayes():
                     grams = self.buildGramTest(data)
                 else:
                     grams = self.buildGram(data)
-                # print("Tweet: ", grams, language)
 
                 score_eu = Score('eu', self.test(grams, 'eu'))
                 score_ca = Score('ca', self.test(grams, 'ca'))
@@ -425,28 +423,14 @@ class NaiveBayes():
                 score_en = Score('en', self.test(grams, 'en'))
                 score_pt = Score('pt', self.test(grams, 'pt'))
 
-                # print('score_eu', score_eu.score_value)
-                # print('score_ca', score_ca.score_value)
-                # print('score_gl', score_gl.score_value)
-                # print('score_es', score_es.score_value)
-                # print('score_en', score_en.score_value)
-                # print('score_pt', score_pt.score_value)
-
                 guesses = [score_eu, score_ca, score_gl, score_es, score_en, score_pt]
                 guesses_score = [score_eu.score_value, score_ca.score_value, score_gl.score_value, score_es.score_value, score_en.score_value, score_pt.score_value]
                 prediction = self.getMostAccurateLanguage(guesses_score)
                 targets.append(language)
                 predictions.append(guesses[prediction].language)
 
-                # print('Original: ', language)
-                # print('Model Guess: ', guesses[answer].language)
-                # i += 1
-                # if i == 20:
-                #     break
-                
-        
                 # Information for output files
-                outputFile = Output(self.vocabulary_type, self.n_gram_type, self.smoothing)
+                outputFile = OutputNaiveBayes(self.vocabulary_type, self.n_gram_type, self.smoothing)
                 predictedLanguage = guesses[prediction].language
 
                 # score of predictedLanguage
@@ -459,7 +443,7 @@ class NaiveBayes():
                     label = 'correct'
                 else:
                     label = 'wrong'
-                
+
                 # trace file
                 outputFile.trace(userId, predictedLanguage, scoreOfPrediction, language, label)
 
@@ -467,14 +451,9 @@ class NaiveBayes():
         stats.buildConfusionMatrix()
         stats.calculateStats()
         stats.printStats()
-        
+
         # eval file
         outputFile.overallEvaluation(stats.accuracy, stats.outputClassPrecisions(), stats.outputClassRecalls(), stats.outputClassF1(), stats.macro_F1, stats.weighed_average_F1)
-        
-
-
-
-
 
 
 

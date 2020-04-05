@@ -24,11 +24,12 @@ import pandas as pd
 import string
 import statistics
 
+from modules.outputMyModel import OutputMyModel
 from .wordEncoding import WordEncoding
 from .stats import Stats
 
 # Toggles
-TOGGLE_LOAD_MODEL = False
+TOGGLE_LOAD_MODEL = True
 
 class NeuralNet():
     def __init__(self, v, train_file_name, test_file_name):
@@ -86,6 +87,8 @@ class NeuralNet():
             return 'en'
         if languageNum == 5:
             return 'pt'
+        else:
+            return 'None'
 
     def stringToLanguage(self, languageString):
         if languageString == 'eu':
@@ -147,7 +150,7 @@ class NeuralNet():
 
         # Build Model
         if TOGGLE_LOAD_MODEL:
-            self.model = keras.models.load_model('not_bad_model_with_extra_data.h5')
+            self.model = keras.models.load_model('not_bad_model_2.h5')
 
         else:
             self.model = keras.models.Sequential()
@@ -218,31 +221,39 @@ class NeuralNet():
                 language = self.predictLanguage(clean_result)
                 predictions.append(language)
 
-        if not predictions:
-            return 0
-        else:
-            try:
-                guess = statistics.mode(predictions)
-                return guess
+        return predictions
 
-            except ValueError:
-                # print('Found 2 equally common values...')
-                return None
+    def getHighestPrediction(self, predictions):
+        try:
+            prediction = statistics.mode(predictions)
+            return prediction
+
+        except ValueError:
+            # print('Found 2 equally common values...')
+            return None
+
+    def getPredictionScore(self, prediction, predictions):
+        score = 0
+
+        if(prediction != None):
+            # Get Prediction score
+            total_score = 0
+            size_predictions = len(predictions)
+
+            for value in predictions:
+                if value == prediction:
+                    total_score += 1
+
+            score = total_score / size_predictions
+
+        return score
+
 
     def runTest(self):
         predictions = []
         targets = []
 
-        # Variables for a limited run
         i = 0
-        countEU = 0
-        countCA = 0
-        countGL = 0
-        countES = 0
-        countEN = 0
-        countPT = 0
-        write = True
-        TWEET_LIMIT = 500
 
         with open(self.test_file_name) as f:
             tweets = f.readlines()
@@ -258,51 +269,43 @@ class NeuralNet():
                 data = ' '.join(elements[3:])
                 data_split = data.split()
 
-                # Logic for a limited run
-                if language == 'eu':
-                    if countEU < TWEET_LIMIT:
-                        write = True
-                        countEU += 1
+                i += 1
+                if (i % 100) == 1:
+                    print('Done tweets', i)
 
-                elif language == 'ca':
-                    if countCA < TWEET_LIMIT:
-                        write = True
-                        countCA += 1
+                predictions_model = self.test(data_split)
+                if predictions_model:
+                    prediction = self.getHighestPrediction(predictions_model)
+                    scoreOfPrediction = self.getPredictionScore(prediction, predictions_model)
 
-                elif language == 'gl':
-                    if countGL < TWEET_LIMIT:
-                        write = True
-                        countGL += 1
+                else:
+                    prediction = None
+                    scoreOfPrediction = 0
 
-                elif language == 'es':
-                    if countES < TWEET_LIMIT:
-                        write = True
-                        countES += 1
+                targets.append(language)
+                predictions.append(self.languageToString(prediction))
 
-                elif language == 'en':
-                    if countEN < TWEET_LIMIT:
-                        write = True
-                        countEN += 1
+                # Information for output files
+                outputFile = OutputMyModel()
+                predictedLanguage = self.languageToString(prediction)
 
-                elif language == 'pt':
-                    if countPT < TWEET_LIMIT:
-                        write = True
-                        countPT += 1
+                # correct/wrong label
+                if(predictedLanguage == language):
+                    label = 'correct'
+                else:
+                    label = 'wrong'
 
-                if write:
-                    i += 1
-                    if (i % 100) == 1:
-                        print('Done tweets', i)
-
-                    prediction = self.test(data_split)
-                    targets.append(language)
-                    predictions.append(self.languageToString(prediction))
-                    # write = False
+                # trace file
+                outputFile.trace(userId, predictedLanguage, scoreOfPrediction, language, label)
 
         stats = Stats(predictions, targets)
         stats.buildConfusionMatrix()
         stats.calculateStats()
         stats.printStats()
+
+        # eval file
+        outputFile.overallEvaluation(stats.accuracy, stats.outputClassPrecisions(), stats.outputClassRecalls(), stats.outputClassF1(), stats.macro_F1, stats.weighed_average_F1)
+
 
     def cleanTrainData(self):
         with open(self.train_file_name) as f:

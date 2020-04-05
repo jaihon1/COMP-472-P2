@@ -233,20 +233,20 @@ class Stats():
 
     def outputClassPrecisions(self):
         # eu-P, ca-P, gl-P, es-P, en-P and pt-P
-        classPrecision = str(round(self.eu_precision,4)) + '  ' + str(round(self.ca_precision, 4)) + '  ' + str(round(self.gl_precision, 4)) + '  ' 
-        classPrecision += str(round(self.es_precision, 4)) + '  ' + str(round(self.en_precision, 4)) + '  ' + str(round(self.pt_precision, 4))
+        classPrecision = str('{:.4f}'.format(self.eu_precision)) + '  ' + str('{:.4f}'.format(self.ca_precision)) + '  ' + str('{:.4f}'.format(self.gl_precision)) + '  ' 
+        classPrecision += str('{:.4f}'.format(self.es_precision)) + '  ' + str('{:.4f}'.format(self.en_precision)) + '  ' + str('{:.4f}'.format(self.pt_precision))
         return classPrecision
 
     def outputClassRecalls(self):
         # eu-R, ca-R, gl-R, es-R, en-R and pt-R
-        classRecall = str(round(self.eu_recall, 4)) + '  ' + str(round(self.ca_recall, 4)) + '  ' + str(round(self.gl_recall, 4)) + '  '
-        classRecall += str(round(self.es_recall, 4)) + '  ' + str(round(self.en_recall, 4)) + '  ' + str(round(self.pt_recall, 4))
+        classRecall = str('{:.4f}'.format(self.eu_recall)) + '  ' + str('{:.4f}'.format(self.ca_recall)) + '  ' + str('{:.4f}'.format(self.gl_recall)) + '  '
+        classRecall += str('{:.4f}'.format(self.es_recall)) + '  ' + str('{:.4f}'.format(self.en_recall)) + '  ' + str('{:.4f}'.format(self.pt_recall))
         return classRecall
 
     def outputClassF1(self):
          # eu-F, ca-F, gl-F, es-F, en-F and pt-F
-        classF1 = str(round(self.eu_f1, 4)) + '  ' + str(round(self.ca_f1, 4)) + '  ' + str(round(self.gl_f1, 4)) + '  ' 
-        classF1 += str(round(self.es_f1, 4)) + '  ' + str(round(self.en_f1, 4)) + '  ' + str(round(self.pt_f1, 4))
+        classF1 = str('{:.4f}'.format(self.eu_f1)) + '  ' + str('{:.4f}'.format(self.ca_f1)) + '  ' + str('{:.4f}'.format(self.gl_f1)) + '  '
+        classF1 += str('{:.4f}'.format(self.es_f1)) + '  ' + str('{:.4f}'.format(self.en_f1)) + '  ' + str('{:.4f}'.format(self.pt_f1))
         return classF1
 
 
