@@ -13,11 +13,11 @@ Requested deliverable files are under 'test_run_output' folder in root
 
 #### Note:
 Play with hyper-parameters on line 27 in driverNaiveBayes.py
-## BYOM:
-### Required Modules
+### BYOM:
+#### Required Modules
 1. Tensorflow ^2.0.0
 2. Pandas ^1.0.3
-### Running the driver
+#### Running the driver
 1. Navigate to project root directory
 2. Navigate to `src` directory
 3. Run the following command: `python driverNeuralNet.py`
