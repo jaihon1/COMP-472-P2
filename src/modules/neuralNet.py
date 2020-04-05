@@ -29,7 +29,7 @@ from .wordEncoding import WordEncoding
 from .stats import Stats
 
 # Toggles
-TOGGLE_LOAD_MODEL = True
+TOGGLE_LOAD_MODEL = False
 
 class NeuralNet():
     def __init__(self, train_file_name, test_file_name):
@@ -142,9 +142,9 @@ class NeuralNet():
         print("DONE")
 
 
-        layer_1 = 377
-        layer_2 = 233
-        layer_3 = 377
+        layer_1 = 256
+        layer_2 = 256
+        # layer_3 = 377
         # layer_4 = 16
         # layer_5 = 16
 
@@ -156,7 +156,7 @@ class NeuralNet():
             self.model = keras.models.Sequential()
             self.model.add(keras.layers.Dense(layer_1, input_dim=390, activation='relu', name='layer_1'))
             self.model.add(keras.layers.Dense(layer_2, activation='relu', name='layer_2'))
-            self.model.add(keras.layers.Dense(layer_3, activation='relu', name='layer_3'))
+            # self.model.add(keras.layers.Dense(layer_3, activation='relu', name='layer_3'))
             # self.model.add(keras.layers.Dense(layer_4, activation='relu', name='layer_4'))
             # self.model.add(keras.layers.Dense(layer_5, activation='relu', name='layer_5'))
             # self.model.add(keras.layers.Dense(200, activation='relu', name='layer_6'))
@@ -171,7 +171,7 @@ class NeuralNet():
             )
 
             # Create Logger
-            RUN_NAME = 'run-with-{}-{}-{}-nodes'.format(layer_1, layer_2, layer_3)
+            RUN_NAME = 'run-with-{}-{}-nodes'.format(layer_1, layer_2)
             logger = keras.callbacks.TensorBoard(
                 log_dir = 'logs/{}'.format(RUN_NAME),
                 write_graph = True,
