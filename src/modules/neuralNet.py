@@ -32,7 +32,7 @@ from .stats import Stats
 TOGGLE_LOAD_MODEL = True
 
 class NeuralNet():
-    def __init__(self, v, train_file_name, test_file_name):
+    def __init__(self, train_file_name, test_file_name):
         self.train_file_name = train_file_name
         self.test_file_name = test_file_name
         self.train_dataset_input = 'train-input-encoded.txt'
